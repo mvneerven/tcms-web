@@ -142,17 +142,24 @@
           dataType: "json",
           timeout: 30000,
           success: (response) => {
-            console.log(responses);
+            console.log(response);
+            $(
+              '<div class="row survey-results">' +
+                JSON.stringify(response) +
+                "</div>"
+            ).appendTo("col-12");
             resolve(response);
           },
           error: (response) => {
-            console.log(responses);
+            console.log(response);
+            $(
+              '<div class="row survey-results">' +
+                JSON.stringify(response) +
+                "</div>"
+            ).appendTo("col-12");
             reject(response);
           },
         });
-      });
-      prom.resolve((result) => {
-        alert(JSON.stringify(result));
       });
 
       var vis = $('<div class="row survey-results"></div>');
