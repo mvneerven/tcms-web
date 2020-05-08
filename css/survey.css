@@ -6,7 +6,6 @@
 
 #survey-canvas .btn-group{
   margin-top: 30px;
-  margin-bottom: 30px;
 }
 
 .survey-container{
@@ -81,12 +80,11 @@
     width: 100%;
     max-height: 250px;
   }
-  
-  .circle-bg {
+ 
+ .circle-bg {
     fill: none;
-    stroke: #e2e2e2;
     stroke-width: 3.8;
-  }
+}
   
   .circle {
     fill: none;
@@ -107,11 +105,6 @@
     font-family: sans-serif;
     font-size: 0.5em;
     text-anchor: middle;
-  }
-
-
-#survey-canvas .single-chart{
-    min-height: 200px;
 }
 
 #survey-canvas .single-chart p{
@@ -138,9 +131,141 @@
 
 #survey-canvas .reliability-score{
   max-width: 140px;
-  margin: auto;
 }
 
 #survey-canvas .question label.inline {
   display: inline-block;
+}
+
+table.swot {
+  width: 100%;
+  margin-top: 3em;
+  background: rgb(134,134,134);
+  background: linear-gradient(180deg, #D6D8DB 0%, #EDEFF3 100%);
+}
+
+th.swot-h {
+  font-size: 20px;
+  padding: 5px 10px;
+  background-color: #B3B5B8;
+}
+
+#survey-canvas .tcms-score .percentage{
+    font-weight: 900;
+}
+
+.swot-g .tcms-score{
+  display: inline-block;
+  width:80%
+}
+
+.swot-g .reliability-score{
+  display: inline-block;
+  width:10%;
+  vertical-align: top;
+}
+
+.swot td {
+   padding: 0;
+   vertical-align: top;
+}
+
+.swot td > div{
+  margin: 10px;
+}
+
+.swot td h4 {
+  font-size: 12px;
+  color: black;
+  font-weight: 800;
+  background: rgba(0,0,0, .2);
+  padding: 5px;
+  margin: 0;
+  display: block;
+  border-radius: 5px 5px 0 0;
+}
+
+.swot td ul {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+}
+
+.swot td ul ul {
+  
+  margin-left: 10px;
+  iiiidisplay: none;
+}
+
+.swot td:hover ul>li ul {
+  display: block;
+  transition: all 0.5s ease;
+}
+
+.swot td.swot-s > div {
+  background-color:#A0C9CA;
+}
+
+.swot td.swot-w > div{
+  background-color:#E6D596;
+}
+
+.swot td.swot-o > div{
+  background-color:#CADB96;
+}
+
+.swot td.swot-t > div{
+  background-color: #E7A1A6;
+}
+
+.swot td.swot-q { 
+  font-size: 12px;
+  width: 50%;
+}
+
+td.swot-q > div {
+  border-radius: 5px 5px 10px 10px;
+}
+
+.swot td.swot-q > div.swot-gr-name{
+  background-color: transparent;
+  font-weight: bold;
+  margin: 0;
+  margin-left: 10px;
+  font-size: larger;
+  margin-top: 15px;
+}
+
+.swot td.swot-q > div.swot-gr-name ul li {
+  font-weight: normal;
+  font-size: smaller;
+  color: #888;
+}
+
+.swot td ul.swot-col {
+  margin-left: 10px;
+}
+
+.tcms-result.overall .tcms-score p {
+  font-size: 2em;
+}
+
+
+li.ti-flag:before, li.ti-check-box:before {  
+  margin-left: -15px;
+  margin-right: 5px;
+}
+
+.swot-xp .ti {
+  margin-left: -18px;
+  margin-right: 5px;
+}
+
+.swot-cp .ti {
+  color: red;
+}
+
+
+div.tcms-result.overall {
+  margin-bottom: 3em;;
 }

@@ -24,12 +24,25 @@
         self._name = pluginName;
         self.tmr = null;
         self.interval = 100;
+        self.curGroup = null;
         self.debug = D.location.hostname == "localhost";
 
         var src = self.$element.attr(self.debug ? "data-src-dbg" : "data-src") || self.options.src;
+
+        
+        var surveyData = {
+            questions: [],
+            rules: {
+                strengths: [],
+                conflicts: [],
+                risks: [],
+                tags: []
+            }
+        };
+
         if (src) {
             $.getJSON(src, function (json) {
-                self.options.questions = json;
+                self.options.questions = convertToSurvey(json);
                 self.init();
             });
         }
@@ -91,7 +104,7 @@
 
         addButtons: function () {
             var self = this;
-            var btns = $('<div class="btn-group"><a id="backBtn" href="#" class="button btn btn-default">« Back</a><a id="nextBtn" href="#" class="button btn btn-primary">Continue »</a><a href="" class="button btn">Restart</a></div>');
+            var btns = $('<div class="btn-group survey-buttons"><a id="backBtn" href="#" class="button btn btn-default">« Back</a><a id="nextBtn" href="#" class="button btn btn-primary">Continue »</a><a href="" class="button btn">Restart</a></div>');
             btns.insertAfter(self.$element);
         },
 
@@ -150,6 +163,7 @@
             var questionTextElement = $('<div class="question-text"></div>');
             var questionAnswerElement = $('<div class="answer"></div>');
             var questionCommentElement = $('<div class="comment"></div>');
+            
 
             questionElement.appendTo($('.survey-container'));
             questionElement.append(questionTextElement);
@@ -218,7 +232,8 @@
             questionAnswerElement.after('<div class="required-message">This is a required question</div>');
             questionElement.hide();
 
-            if (question.group) {
+            if (question.group && question.group != self.curGroup) {
+                self.curGroup = question.group;
                 var headerElement = $('<h2>' + question.group + '</h2>');
                 questionElement.prepend(headerElement);
             }
