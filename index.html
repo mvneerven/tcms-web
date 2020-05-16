@@ -1,62 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
-<head>
+    <title>Neerventure - Tech Canvas Maturity Scan</title>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <!-- Bootstrap core CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="css/survey.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+      <div class="container">
+        <a class="navbar-brand" href="#"
+          >Neerventure - Tech Canvas Maturity Scan</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#"
+                >Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-  <title>Neerventure - Tech Canvas Maturity Scan</title>
+    <!-- Page Content -->
+    <div class="container" id="survey-canvas">
+      <div class="row">
+        <button id="login">Login</button>
+        <div id="user"></div>
+        <button id="token">token</button>
+        <div id="tokenvalue"></div>
 
-  <!-- Bootstrap core CSS -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/survey.css" rel="stylesheet">
+        <div class="col-lg-12">
+          <h1 class="mt-5">Survey</h1>
 
-</head>
-<body>
-
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">Neerventure - Tech Canvas Maturity Scan</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-        </ul>
+          <div id="survey"></div>
+        </div>
       </div>
     </div>
-  </nav>
 
-  <!-- Page Content -->
-  <div class="container" id="survey-canvas" >
-    <div class="row">
-      <div class="col-lg-12">
-        <h1 class="mt-5">Survey</h1>
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="js/jquery.chart.js"></script>
+    <script src="js/jquery.survey.js?v=6"></script>
+    <script src="js/tcms.js?v=3"></script>
 
-        <div id="survey"></div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script src="js/jquery.chart.js"></script>
-  <script src="js/jquery.survey.js?v=6"></script>
-  <script src="js/tcms.js?v=3"></script>
- 
-
-</body>
-
+    <!-- Microsoft Authentication Library for JavaScript -->
+    <script
+      type="text/javascript"
+      src="https://alcdn.msftauth.net/lib/1.3.1/js/msal.min.js"
+    ></script>
+    <script src="js/auth.js"></script>
+  </body>
 </html>
