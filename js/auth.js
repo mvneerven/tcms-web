@@ -16,7 +16,7 @@
   });
 
   var loginRequest = {
-    scopes: ["Read","Save"], // optional Array<string>
+    scopes: ["https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read", "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
   };
   $("#login").on("click", (e) => {
     msalInstance
@@ -42,7 +42,7 @@ function getApiToken() {
   // if the user is already logged in you can acquire a token
   if (window.msalInstance.getAccount()) {
     var tokenRequest = {
-     scopes: ["Read","Save"],
+      scopes: ["https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read", "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
     };
     return window.msalInstance
       .acquireTokenSilent(tokenRequest)
