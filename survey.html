@@ -36,6 +36,10 @@
                 <span class="sr-only">(current)</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" disabled="disabled" id="signout" href="#na">Sign out</a>
+            </li>
+
           </ul>
         </div>
       </div>
@@ -51,7 +55,15 @@
             Please take your time to fill out the form to the best of your knowledge.
           </p>
 
-          <div id="survey" data-toolbar="#toolbar"></div>
+          <div id="survey" data-toolbar="#toolbar">
+
+            <p>
+              To take the survey, we need an account associated with your company.
+            </p>
+
+            <a class="btn btn-primary" id="login" href="/">Log in and start Survey</a>
+
+          </div>
 
         </div>
       </div>
@@ -80,11 +92,15 @@
   <!-- Bootstrap core JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  
+
   <script src="js/jquery.helpers.js"></script>
   <script src="js/jquery.chart.js"></script>
-  <script src="js/jquery.survey.js?v=2.6"></script>
-  <script src="js/tcms.js?v=2.0"></script>
+  <script src="js/jquery.survey.js?v=2.7"></script>
+
+  <script type="text/javascript" src="https://alcdn.msftauth.net/lib/1.3.1/js/msal.min.js"></script>
+  <script src="js/jquery.auth.js"></script>
+
+  <script src="js/tcms.js?v=2.1"></script>
 
 
 </body>

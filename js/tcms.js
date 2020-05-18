@@ -13,9 +13,32 @@
     else
         src = "https://tcmsapi.azurewebsites.net/"    
 
-    $("#survey").html('Loading...');
 
-    function convertQType(type){
+    $("#signout").click(function(){
+        $(this).auth({action: "signout"});
+        e.returnValue = false;
+        return false;
+    });
+
+    $("#login").click(function(e){
+
+        $(this).auth({action: "login"}).on("ssr.loggedin", function(e, account){
+            W.account = account;
+            
+            $("#survey").html('Loading...');
+
+            takeSurvey();
+            
+        });
+        e.returnValue = false;
+        return false;
+    });
+
+
+    function convertQType(id, type){
+        if(id == "email")
+            return "text-field-email";
+        
         switch(type){
             case "single" : return "single-select";
             case "multiple" : return "multi-select";
@@ -79,10 +102,13 @@
             }
 
             for(var qId in qList){
+                console.log(qId);
+
                 dictA = {
                     id: qId,
                     answers: []
                 }
+                
                 gIx++;
                 var qObj = qList[qId];
                 var options = [];
@@ -91,12 +117,30 @@
                     options.push(qObj.answers[aId].text);
                     dictA.answers.push(aId);
                 }
+
+                switch(qId){
+                case "fullname":
+                    options.push(W.account.name);
+                    dictA.answers.push(W.account.name);
+                    break;
+                case "email":
+                    options.push(W.account.userName);
+                    dictA.answers.push(W.account.userName);
+                    break;
+                case "company":
+                    var comp = W.account.userName.split('@')[1];
+                    options.push(comp);
+                    dictA.answers.push(comp);
+                    break;
+                    
+                }
+                
                 var q = {
                     name: qId,
                     text: qObj.text,
                     break_after: gIx==gCount,
                     group: gName,
-                    type: convertQType(qObj.type),
+                    type: convertQType(qId, qObj.type),
                     options: options,
                     inline: qId == "pm",
                     required: qObj.text.endsWith("*")
@@ -113,223 +157,225 @@
         return questions;
     };
 
-    $.getJSON(src + "survey", function (obj) {        
+    function takeSurvey(){
+        $.getJSON(src + "survey", function (obj) {        
 
-        $(W).on('hashchange load', function (e) {
-            
-
-            var h = W.location.hash.substr(1);
-
-            console.log(h);
-
-            if(h.startsWith("info:")){
-                $("#survey").dialog({
-                    title: "Survey",
-                    message: h
-                }).on("hide", function(){
-                    console.log("hide");
-                    W.location.hash = "";
-                });
-            }
-        });       
-
-        $("#survey").html("").survey({
-            questions: convertToSurvey(obj),
-            finish: function (survey) {
-                $(".survey-intro").hide();
+            $(W).on('hashchange load', function (e) {
                 
-                var results = {};
 
-                for (var i = 0; i < survey.questions.length; i++) {
-                    var result = [];
-                    var q = survey.questions[i];
-                    var a = survey.getQuestionAnswer(q);
-                    if(Array.isArray(a)){
-                        for(var k in a){
-                            result.push(dict[i].answers[a[k]]);
-                        }
-                    }
-                    else if(q.type == "text-field-small"){
-                        result.push(a);
-                    }
-                    else{
-                        
-                        result.push(dict[i].answers[a]);
-                    }
-                    
-                    results[dict[i].id] = result;
+                var h = W.location.hash.substr(1);
 
+                console.log(h);
+
+                if(h.startsWith("info:")){
+                    $("#survey").dialog({
+                        title: "Survey",
+                        message: h
+                    }).on("hide", function(){
+                        console.log("hide");
+                        W.location.hash = "";
+                    });
                 }
-                console.log(results);
+            });       
 
-                $.ajax({
-                    type: "POST",
-                    url: src + "surveyresults",
-                    data: JSON.stringify(results),
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: function(res){
-                        console.log(res);
-                        var c = 1;
+            $("#survey").html("").survey({
+                questions: convertToSurvey(obj),
+                finish: function (survey) {
+                    $(".survey-intro").hide();
 
-                        var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h h2" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr></tbody>' +
-                            '<thead><th class="swot-a h4" colspan="2">SWOT Analysis</th></thead>'+
-                            '<tbody class="swot-qc"><tr><td class="swot-q swot-s"><div><h4>Strengths</h4></div></td><td class="swot-q swot-w"><div><h4>Weaknesses</h4></div></td></tr>' +
-                            '<tr><td class="swot-q swot-o"><div><h4>Opportunities</h4></div></td><td class="swot-q swot-t"><div><h4>Threats</h4></div></td></tr></tbody></table></div>';
+                    var results = {};
 
-                        $(".survey-conclusion").remove();
-                        $(".survey-toolbar, #survey").hide();
-
-                        var results = $('<div class="survey-conclusion"></div>');
-
-                        results.insertAfter("#survey");
-
-                        var vis = $('<div class="row survey-results"></div>').appendTo(results);
-                        
-
-                        var conclusion = $('<div class="row"></div>').insertBefore(vis);
-
-                        var info = $('<div class="col-12 scan-info"></div>').appendTo(conclusion);
-                                    
-                        var color = getColor(res.overallScore);
-
-                        var overallResultsTable = $(tpl.replace('col-xl-6 col-12', 'col-sm-12 offset-sm-0 col-lg-6 offset-lg-3')).appendTo(vis);
-                        overallResultsTable.addClass("overall").find('.swot-h').text("ISV Canvas Maturity Score");
-                        
-                        $('<p class="tcms-issuer"><em> ' + res.issuer.company + ' (' + res.issuer.stage +  ')<em><br/>').appendTo(info);
-                        $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress +')<em></p>').appendTo(info);
-
-                        $('<div></div>').appendTo(overallResultsTable.find(".swot-g")).chart({
-                            type: "circular",
-                            title: "",
-                            outerClass: "tcms-score",
-                            color: toRGB(shade(color)),
-                            fillColor: toRGB(color),
-                            value: Math.round(res.overallScore)
-                        });
-
-                        color = getColor(res.reliability);
-
-                        $('<div></div>').appendTo(overallResultsTable.find(".swot-g")).chart({
-                            type: "circular",
-                            title: "Score Reliability",
-                            outerClass: "reliability-score",
-                            color: toRGB(shade(color)),
-                            fillColor: toRGB(color),
-                            value: Math.round(res.reliability)
-                        }).attr("title", "Based on the percentage of questions answered.");
-
-
-                        var ar = [];
-                        for (var key in res.scores) {
-                            var group = res.scores[key];
-
-                            ar.push({key: key, weight: group.weightPercent, name: group.name});
-
-                            //$('<a name="grp-' + key +'"></a>').appendTo(vis);
-                            var table = $(tpl).appendTo(vis);
-                            table.attr("id", 'grp-' + key);
+                    for (var i = 0; i < survey.questions.length; i++) {
+                        var result = [];
+                        var q = survey.questions[i];
+                        var a = survey.getQuestionAnswer(q);
+                        if(Array.isArray(a)){
+                            for(var k in a){
+                                result.push(dict[i].answers[a[k]]);
+                            }
+                        }
+                        else if(q.type == "text-field-small"){
+                            result.push(a);
+                        }
+                        else{
                             
-                            table.addClass(key);
+                            result.push(dict[i].answers[a]);
+                        }
+                        
+                        results[dict[i].id] = result;
 
-                            table.find('.swot-h:first').text(group.name);
+                    }
+                    console.log(results);
+
+                    $.ajax({
+                        type: "POST",
+                        url: src + "surveyresults",
+                        data: JSON.stringify(results),
+                        contentType: "application/json",
+                        dataType: "json",
+                        success: function(res){
+                            console.log(res);
+                            var c = 1;
+
+                            var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h h2" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr></tbody>' +
+                                '<thead><th class="swot-a h4" colspan="2">SWOT Analysis</th></thead>'+
+                                '<tbody class="swot-qc"><tr><td class="swot-q swot-s"><div><h4>Strengths</h4></div></td><td class="swot-q swot-w"><div><h4>Weaknesses</h4></div></td></tr>' +
+                                '<tr><td class="swot-q swot-o"><div><h4>Opportunities</h4></div></td><td class="swot-q swot-t"><div><h4>Threats</h4></div></td></tr></tbody></table></div>';
+
+                            $(".survey-conclusion").remove();
+                            $(".survey-toolbar, #survey").hide();
+
+                            var results = $('<div class="survey-conclusion"></div>');
+
+                            results.insertAfter("#survey");
+
+                            var vis = $('<div class="row survey-results"></div>').appendTo(results);
                             
-                            color = getColor(group.score);
 
-                            $("<div></div>").appendTo(table.find(".swot-g")).chart({
+                            var conclusion = $('<div class="row"></div>').insertBefore(vis);
+
+                            var info = $('<div class="col-12 scan-info"></div>').appendTo(conclusion);
+                                        
+                            var color = getColor(res.overallScore);
+
+                            var overallResultsTable = $(tpl.replace('col-xl-6 col-12', 'col-sm-12 offset-sm-0 col-lg-6 offset-lg-3')).appendTo(vis);
+                            overallResultsTable.addClass("overall").find('.swot-h').text("ISV Canvas Maturity Score");
+                            
+                            $('<p class="tcms-issuer"><em> ' + res.issuer.company + ' (' + res.issuer.stage +  ')<em><br/>').appendTo(info);
+                            $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress +')<em></p>').appendTo(info);
+
+                            $('<div></div>').appendTo(overallResultsTable.find(".swot-g")).chart({
                                 type: "circular",
-                                outerClass: "col-8",
-                                innerClass: "offset-5",
                                 title: "",
+                                outerClass: "tcms-score",
                                 color: toRGB(shade(color)),
                                 fillColor: toRGB(color),
-                                value: Math.round(group.score)
+                                value: Math.round(res.overallScore)
                             });
 
-                            
-                            for(var i in group.swot){
-                                var letter = i.substr(0,1).toLowerCase();
-                                var block = table.find(".swot-" + letter + " > div");
-                                var swot = group.swot[i];
-                                if(swot){
-                                    var ul = $('<ul class="swot-topic"></ul>').appendTo(block);
+                            color = getColor(res.reliability);
 
-                                    for(var topic in swot){
-                                        var se = swot[topic];
-                                        var txt = "";
-                                        var li = $('<li></li>').appendTo(ul).text(topic)
-                                        var ulSub  = $('<ul class="swot-expl"></ul>').appendTo(li);
-                                        
-                                        for(var elem in se){
-                                            var m = se[elem].isMissingAnswer;
-                                            var c = m ? 'swot-cp': 'swot-np';
-                                            var ic = m ? 'close' : 'check';
+                            $('<div></div>').appendTo(overallResultsTable.find(".swot-g")).chart({
+                                type: "circular",
+                                title: "Score Reliability",
+                                outerClass: "reliability-score",
+                                color: toRGB(shade(color)),
+                                fillColor: toRGB(color),
+                                value: Math.round(res.reliability)
+                            }).attr("title", "Based on the percentage of questions answered.");
 
-                                            var liSub = $('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic +'"></span><a href="#info:' + se[elem].answer + '">' + se[elem].description +'</a></li>').appendTo(ulSub)
+
+                            var ar = [];
+                            for (var key in res.scores) {
+                                var group = res.scores[key];
+
+                                ar.push({key: key, weight: group.weightPercent, name: group.name});
+
+                                //$('<a name="grp-' + key +'"></a>').appendTo(vis);
+                                var table = $(tpl).appendTo(vis);
+                                table.attr("id", 'grp-' + key);
+                                
+                                table.addClass(key);
+
+                                table.find('.swot-h:first').text(group.name);
+                                
+                                color = getColor(group.score);
+
+                                $("<div></div>").appendTo(table.find(".swot-g")).chart({
+                                    type: "circular",
+                                    outerClass: "col-8",
+                                    innerClass: "offset-5",
+                                    title: "",
+                                    color: toRGB(shade(color)),
+                                    fillColor: toRGB(color),
+                                    value: Math.round(group.score)
+                                });
+
+                                
+                                for(var i in group.swot){
+                                    var letter = i.substr(0,1).toLowerCase();
+                                    var block = table.find(".swot-" + letter + " > div");
+                                    var swot = group.swot[i];
+                                    if(swot){
+                                        var ul = $('<ul class="swot-topic"></ul>').appendTo(block);
+
+                                        for(var topic in swot){
+                                            var se = swot[topic];
+                                            var txt = "";
+                                            var li = $('<li></li>').appendTo(ul).text(topic)
+                                            var ulSub  = $('<ul class="swot-expl"></ul>').appendTo(li);
+                                            
+                                            for(var elem in se){
+                                                var m = se[elem].isMissingAnswer;
+                                                var c = m ? 'swot-cp': 'swot-np';
+                                                var ic = m ? 'close' : 'check';
+
+                                                var liSub = $('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic +'"></span><a href="#info:' + se[elem].answer + '">' + se[elem].description +'</a></li>').appendTo(ulSub)
+                                            }
                                         }
+                                    }                                
+                                }
+
+                                table.find(".swot-q > div").each(function(){
+                                    var div = $(this);
+                                    if(div.find("ul").length == 0){
+                                        $('<ul><li class="swot-none">None</li></ul>').appendTo(div);
                                     }
-                                }                                
+                                });
+
+                                c++;
+                                if (c > 7) c = 0;
                             }
 
-                            table.find(".swot-q > div").each(function(){
-                                var div = $(this);
-                                if(div.find("ul").length == 0){
-                                    $('<ul><li class="swot-none">None</li></ul>').appendTo(div);
+                            ar.sort(function(a, b){
+                                return b.weight - a.weight;
+                            });
+
+                            var quads = ['s', 'w', 'o', 't'];
+                            for(var a in ar){
+                                var ul = null;
+                                for(var quad in quads){
+                                    var q = ".swot-q.swot-" + quads[quad] + ">div:first";
+                                    var el = overallResultsTable.find(q);
+                                    var gEl = $('div.tcms-result.' + ar[a].key + ' ' + q );
+                                    var n = 0;
+                                    gEl.find('ul.swot-topic > li:not(.swot-none)').each(function(){
+                                        var subEl = $(this);
+                                        n++;
+                                        if(n <= 2){
+                                            ul = el.find('.swot-gr-name.swot-gr-' + ar[a].key + " > ul");
+                                            if(ul.length==0){
+                                                var div = $('<div class="swot-gr-name swot-gr-' + ar[a].key +'"><a title="Go to group details" href="#grp-' + ar[a].key + '">' + ar[a].name + '</a></div>').appendTo(el);
+                                                ul = $('<ul class="swot-col"></ul>').appendTo(div);
+                                                
+                                            }
+                                            var txt = subEl.get(0).childNodes[0].nodeValue.trim();
+                                            
+                                            $('<li>' + txt + '</li>').appendTo(ul); 
+                                        }
+                                    });
+                                }
+                            }
+                            
+                            var el = overallResultsTable.find('.swot-q').each(function(){
+                                var td = $(this).find(">div:first");
+                                if(td.find(".swot-gr-name").length == 0){
+                                    $('<div class="swot-gr-name">None</div>').appendTo(td);
                                 }
                             });
 
-                            c++;
-                            if (c > 7) c = 0;
+                            console.log(ar);
+
+                        },
+                        failure: function(errMsg) {
+                            console.log(errMsg);
                         }
-
-                        ar.sort(function(a, b){
-                            return b.weight - a.weight;
-                        });
-
-                        var quads = ['s', 'w', 'o', 't'];
-                        for(var a in ar){
-                            var ul = null;
-                            for(var quad in quads){
-                                var q = ".swot-q.swot-" + quads[quad] + ">div:first";
-                                var el = overallResultsTable.find(q);
-                                var gEl = $('div.tcms-result.' + ar[a].key + ' ' + q );
-                                var n = 0;
-                                gEl.find('ul.swot-topic > li:not(.swot-none)').each(function(){
-                                    var subEl = $(this);
-                                    n++;
-                                    if(n <= 2){
-                                        ul = el.find('.swot-gr-name.swot-gr-' + ar[a].key + " > ul");
-                                        if(ul.length==0){
-                                            var div = $('<div class="swot-gr-name swot-gr-' + ar[a].key +'"><a title="Go to group details" href="#grp-' + ar[a].key + '">' + ar[a].name + '</a></div>').appendTo(el);
-                                            ul = $('<ul class="swot-col"></ul>').appendTo(div);
-                                            
-                                        }
-                                        var txt = subEl.get(0).childNodes[0].nodeValue.trim();
-                                        
-                                        $('<li>' + txt + '</li>').appendTo(ul); 
-                                    }
-                                });
-                            }
-                        }
-                        
-                        var el = overallResultsTable.find('.swot-q').each(function(){
-                            var td = $(this).find(">div:first");
-                            if(td.find(".swot-gr-name").length == 0){
-                                $('<div class="swot-gr-name">None</div>').appendTo(td);
-                            }
-                        });
-
-                        console.log(ar);
-
-                    },
-                    failure: function(errMsg) {
-                        console.log(errMsg);
-                    }
-              });
-            }
-        }).on("ssr.progress", function(e, percent){
-            $(".survey-progress").text(percent + "%");
-        });
-    }).fail(function(j, status, error) { $("#survey").html("Sorry..." + status + " " + error) });
+                });
+                }
+            }).on("ssr.progress", function(e, percent){
+                $(".survey-progress").text(percent + "%");
+            });
+        }).fail(function(j, status, error) { $("#survey").html("Sorry..." + status + " " + error) });
+    }
 
 })(jQuery, window, document);

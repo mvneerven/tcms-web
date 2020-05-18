@@ -155,10 +155,7 @@
             else if (question.type === 'single-select-oneline') {
                 result = $('input[type="radio"][name="' + question.id + '"]:checked').val();
             }
-            else if (question.type === 'text-field-small') {
-                result = $('input[name=' + question.id + ']').val();
-            }
-            else if (question.type === 'email') {
+            else if (question.type === 'text-field-small' || question.type === 'text-field-email') {
                 result = $('input[name=' + question.id + ']').val();
             }
             else if (question.type === 'text-field-large') {
@@ -243,9 +240,10 @@
                 questionElement.addClass('text-field-small');
                 questionAnswerElement.append('<input type="text" value="" class="text form-control" name="' + question.id + '">');
             }
-            else if (question.type === 'email') {
+            else if (question.type === 'text-field-email') {
                 questionElement.addClass('text-field-email');
                 questionAnswerElement.append('<input type="email" value="" class="text form-control" name="' + question.id + '">');
+                
             }
             else if (question.type === 'text-field-large') {
                 questionElement.addClass('text-field-large');
@@ -262,6 +260,12 @@
                 self.curGroup = question.group;
                 var headerElement = $('<h2>' + question.group + '</h2>');
                 questionElement.prepend(headerElement);
+            }
+
+            if(question.type.split('-')[0] == "text"){
+                
+                if(question.options.length)
+                    questionAnswerElement.find("input").val(question.options[0]);
             }
         },
 
