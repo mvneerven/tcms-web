@@ -1,0 +1,163 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Lucida Sans', Arial, sans-serif; 
+}
+
+a{
+  color: #E15E00;
+}
+
+h1, h2, h3, h4, .h1, .h2, .h3, .h4 {
+  font-family: 'Lato', sans-serif; 
+}
+
+footer{
+    background-color: #262724;
+    color: #eee;    
+}
+
+  
+  .wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #eee url(https://subtlepatterns.com/patterns/extra_clean_paper.png);
+  }
+
+  .content {
+    flex: 1;
+    overflow: auto;
+    background: #fff url("https://www.toptal.com/designers/subtlepatterns/patterns/so-white.png");
+  }
+
+  .contributors {
+      padding: 50px;
+      text-align: center;
+  }
+  .contributors img{
+      max-height: 150px;
+      padding: 40px;
+  }
+
+  footer a:link, footer a:visited, footer a:active{
+    color:#eee;
+  }
+
+  .btn.btn-primary{
+    background-color: #FF6A00;
+    border-color: #BE4F00;
+    
+  }
+
+  .btn.btn-primary
+
+  footer #toolbar .btn{
+    color: #eee;
+  }
+
+  footer #toolbar .btn.btn-primary {
+      color: black;
+  }
+
+  #survey-canvas .survey-container .answer.missing{
+    border-color: #FF8B38;
+  }
+
+  #survey-canvas .survey-container .question-text, #survey-canvas .survey-container .required-message{
+    color: #A04504;
+  }
+
+  #toolbar .btn-primary:not(:disabled):not(.disabled).active, #toolbar .btn-primary:not(:disabled):not(.disabled):active, #toolbar .show>.btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color:#FF8B38;
+    border-color: #FF8B38;
+ }
+
+ #toolbar .btn-primary:not(:disabled):not(.disabled).active, #toolbar .btn-primary:not(:disabled):not(.disabled):active, #toolbar .show>.btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: #FF8B38;
+  border-color: #FF8B38;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255,106,0, 0.5);
+}
+
+  .btn-primary.focus, .btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255,106,0, 0.3);
+  }
+
+  #survey-canvas .survey-container .question-text{
+    margin-bottom: 1em;
+  }
+
+
+  #survey-canvas .survey-container .question-text{
+      font-weight: 500;
+      padding: 5px;      
+      background: linear-gradient(90deg, #FFA362 0%, rgba(255,255,255,1) 100%);
+      border-radius: 10px 0px 0px 10px;
+      color: #000;
+  }
+  
+  #survey-canvas  .survey-container .question label span:hover{
+    border-color: #FF8B38;
+  }
+
+  #survey-canvas .survey-container .question label :checked + span{
+    border-color: #FF8B38;
+  }
+
+  
+  footer #toolbar {
+    margin-bottom: 20px;
+    position: fixed;
+    display: inline-block;
+    margin-bottom: 100px;
+    margin-left: -80px;
+    bottom: 0px;
+}
+  
+    .app-info{
+        padding: 1em;
+    }
+
+    .survey-toolbar {
+      background-color: rgba(100,100,100, 0.2);
+      border-radius: 5px;
+      padding: 5px;
+    }
+
+    .survey-toolbar .btn-group{
+      background-color: #aaa;
+    }
+
+    #survey-canvas table.swot {
+        background: transparent;
+    }
+
+    .modal-header{
+      background-color: #FF6A00;
+      color: white;
+    }
+
+    .modal-header button.close{
+      display: none;
+    }
+
+    .modal-footer button.btn{
+      min-width: 6em;
+    }
+
+    input.text {
+      min-width: 15em;
+    }
+
+    .form-control:focus {
+      color: #495057;
+      background-color: #fff;
+      border-color: #FFD1B1;
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem #FFE5D3;
+  }

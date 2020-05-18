@@ -26,6 +26,10 @@
     margin-bottom: 2px;
 }
 
+.survey-container label.inline {
+  display: inline-block;
+}
+
 .survey-container .answer.missing {
     border-color:rgba(244,144,154,0.3);
 }
@@ -107,10 +111,8 @@
     text-anchor: middle;
 }
 
-#survey-canvas .single-chart p{
-    font-size: 12px;
-    font-weight: 800;
-    text-align: center;
+#survey-canvas .tcms-score .single-chart p{
+  display: none;
 }
 
 #survey-canvas .badge-pill {
@@ -145,9 +147,9 @@ table.swot {
 }
 
 th.swot-h {
-  font-size: 20px;
   padding: 5px 10px;
-  background-color: #B3B5B8;
+  text-align: center;
+  
 }
 
 #survey-canvas .tcms-score .percentage{
@@ -171,7 +173,7 @@ th.swot-h {
 }
 
 .swot td > div{
-  margin: 10px;
+  margin: 0;
 }
 
 .swot td h4 {
@@ -191,17 +193,36 @@ th.swot-h {
   margin: 0;
 }
 
-.swot td ul ul {
-  
+.swot td ul ul li {
   margin-left: 10px;
-  iiiidisplay: none;
+  
+  /*display: none;*/
 }
 
-.swot td:hover ul>li ul {
+.swot td ul>li:hover ul li {
   display: block;
   transition: all 0.5s ease;
 }
 
+.swot-q {
+  border: 5px solid #eee;
+}
+
+.swot-q > div {
+  height: 200px;
+  overflow-y: auto;
+}
+
+.swot-none {
+  color: #bbb;
+  font-style: italic;
+}
+
+.swot td > div > ul > li{
+  font-weight: bolder;
+}
+
+/*
 .swot td.swot-s > div {
   background-color:#A0C9CA;
 }
@@ -217,6 +238,7 @@ th.swot-h {
 .swot td.swot-t > div{
   background-color: #E7A1A6;
 }
+*/
 
 .swot td.swot-q { 
   font-size: 12px;
@@ -227,13 +249,13 @@ td.swot-q > div {
   border-radius: 5px 5px 10px 10px;
 }
 
-.swot td.swot-q > div.swot-gr-name{
+.swot td.swot-q > div > div.swot-gr-name{
   background-color: transparent;
   font-weight: bold;
   margin: 0;
   margin-left: 10px;
   font-size: larger;
-  margin-top: 15px;
+  margin-top: 5px;
 }
 
 .swot td.swot-q > div.swot-gr-name ul li {
@@ -268,4 +290,76 @@ li.ti-flag:before, li.ti-check-box:before {
 
 div.tcms-result.overall {
   margin-bottom: 3em;;
+}
+
+.navbar-dark.bg-dark {
+  background-color: #555!important;
+}
+
+.navbar-brand {
+  display: inline-block;
+  width: 250px;
+  height: 40px;
+  background-image: url("../img/isv-canvas-logo-03.svg")!important;
+  background-repeat: no-repeat ;
+  background-size: contain;
+  padding-left: 220px;
+}
+
+#survey-canvas th.swot-a {
+  display: inline-block;
+  background-color: #eee;
+  border-radius: 6px 6px 0px 0px;
+  padding: 3px 6px;
+  margin-bottom: 0;
+}
+
+tbody.swot-qc {
+  border: 10px solid #eee;
+  border-radius: 3px 3px 10px;
+  
+}
+
+td.swot-q:before {
+  content: "";
+  font-family: monospace;
+  position: absolute;
+  font-weight: 800;
+  font-size: 15em;
+  opacity: 0.1;
+  margin-left: 0.4em;
+  margin-top: -0.2em;  
+  pointer-events: none;
+}
+
+td.swot-q.swot-w:before {
+  content: "W";
+  color: #BE5E0F ;
+}
+
+td.swot-q.swot-s:before {
+  content: "S";
+  color: darkgreen;
+}
+
+td.swot-q.swot-t:before {
+  content: "T";
+  color: #C42B2B;
+}
+
+td.swot-q.swot-o:before {
+  content: "O";
+  color: gold;
+}
+
+
+td.swot-q > div > h4{
+  display: none;
+}
+
+.survey-progress {
+  display: inline-block;
+  padding: 5px 20px;
+  background-color: transparent;
+  color: #666;
 }

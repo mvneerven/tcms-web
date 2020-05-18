@@ -5,58 +5,124 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+  <meta name="description" content="ISV Canvas - an ISV technical assessment - by Neerventure &amp; Microsoft">
+  <meta name="author" content="Marc van Neerven">
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://isvcanvas.com" />
+  <meta property="og:title" content="ISV Canvas" />
+  <meta property="og:image" content="https://isvcanvas.com/img/og-image.png" />
+  <meta property="og:site_name" content="ISVCanvas.com" />
+  <meta property="og:description" content="ISV Canvas - an ISV technical assessment - by Neerventure &amp; Microsoft" />
+  
 
-  <title>Neerventure - Tech Canvas Maturity Scan</title>
+  <title>ISV Canvas</title>
 
   <!-- Bootstrap core CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&display=swap" rel="stylesheet">
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/survey.css" rel="stylesheet">
-
+  <link href="css/main.css?v=2.5" rel="stylesheet">
+  <link href="css/survey.css?v=2.5" rel="stylesheet">
+  <link rel="shortcut icon" href="img/icon-64.png" />
 </head>
+
 <body>
+  <div class="wrapper">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top header">
+      <div class="container">
+        <a class="navbar-brand" href="/"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+          aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">Neerventure - Tech Canvas Maturity Scan</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-        </ul>
+    <!-- Page Content -->
+    <div class="container content">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="mt-5">ISV Canvas Survey (BETA)</h1>
+
+          <p>Welcome to <strong>ISV Canvas</strong>, an assessment tool based on the work of a Chief Technology Officer with 30 years of experience in software development, who has worked for and with numerous companies, ranging from early startups to Enterprise Software vendors, who has worked in Software Developer/Architect and in governance roles, and is now a Native Cloud and Semantic Data advocate.</p>
+
+          <h2>Background</h2>
+
+          <p>At first sight, a truly great software product stems from commercial vision, has a perfect product-market fit and focuses highly on a fluid and efficient User Experience Design (UX).</p>
+
+          <p>Behind the screens however, team quality and efficiency, a streamlined development process, solid architectural design and good use of (Cloud) infrastructure is equally important.</p>
+
+          <p>The ISV Canvas Survey presented here assesses the <strong>tech state</strong> of Startups, Scaleups and ISVs in a number of areas, and returns a weighted score on each of them:</p>
+
+          <ul>
+            <li>Team & Process</li>
+            <li>Architecture & Data</li>
+            <li>Security, Privacy & Compliance</li>
+            <li>Non-Functional Requirements</li>
+            <li>Cost Management</li>
+            <li>Strategy & Governance</li>
+            <li>Go-to-Market</li>
+          </ul>
+          
+          <h2>How it works</h2>
+
+          <p>The ISV Canvas Maturity Survey provides a way to objectively assess the maturity of Startups, Scaleups and ISVs.</p>
+
+          <p>Obviously, a Startup in the MVP stage is quite different from an established ISV. Each stage requires focus on different areas, some aspects are essential in one but optional in the other, and each stage has its own risks and challenges.</p>
+
+          <p>The ISV Canvas Maturity Survey uses a carefully crafted algorithm to take all these aspects in consideration.</p>
+
+          <p>
+            <a class="btn btn-primary" href="survey.html">Take the survey</a>
+            <a aria-disabled="true" class="disabled btn btn-secondary" href="about.html">More information</a>
+          </p>
+
+          <div class="contributors">
+            <p>Brought to you by</p>
+
+            <a target="_blank" title="Neerventure CTO-as-a-Service" href="https://neerventure.com"><img
+                src="img/neerventure-logo.png" class="img-fluid " /></a>
+            <a target="_blank" title="Microsoft" href="https://www.microsoft.com/"> <img src="img/Microsoft-Logo.png"
+                class="img-fluid" /></a>
+
+          </div>
+        </div>
       </div>
     </div>
-  </nav>
 
-  <!-- Page Content -->
-  <div class="container" id="survey-canvas" >
-    <div class="row">
-      <div class="col-lg-12">
-        <h1 class="mt-5">Survey</h1>
 
-        <div id="survey"></div>
+    <footer class="text-center">
+      <div class="app-info">
+        <p class="mb-2"><small>Copyright &copy; 2019-2020 Neerventure.com</small></p>
 
+        <small>
+          This is a <a
+            title="JAMstack - Fast and secure sites and dynamic apps with JavaScript, APIs, and prerendered Markup"
+            href="https://jamstack.org/" target="_blank">JAMstack</a> Site,
+          served directly from <a target="_blank"
+            title="Static, SSL Websites, using Azure Cloud Storage &amp; CloudFlare"
+            href="https://adamtheautomator.com/host-static-website/">Cloud Storage</a>.
+        </small>
       </div>
-    </div>
+
+    </footer>
   </div>
 
   <!-- Bootstrap core JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script src="js/jquery.chart.js"></script>
-  <script src="js/jquery.survey.js?v=6"></script>
-  <script src="js/tcms.js?v=3"></script>
- 
-
 </body>
 
 </html>
