@@ -91,8 +91,7 @@
                     options.push(qObj.answers[aId].text);
                     dictA.answers.push(aId);
                 }
-
-                questions.push({
+                var q = {
                     name: qId,
                     text: qObj.text,
                     break_after: gIx==gCount,
@@ -101,7 +100,10 @@
                     options: options,
                     inline: qId == "pm",
                     required: qObj.text.endsWith("*")
-                });
+                };
+                questions.push(q);
+                if(q.required)
+                    q.text = q.text.substr(0, q.text.length-1);
 
                 dict[j]=dictA;
                 j++;
@@ -111,11 +113,31 @@
         return questions;
     };
 
-    $.getJSON(src + "survey", function (obj) {
-        
+    $.getJSON(src + "survey", function (obj) {        
+
+        $(W).on('hashchange load', function (e) {
+            
+
+            var h = W.location.hash.substr(1);
+
+            console.log(h);
+
+            if(h.startsWith("info:")){
+                $("#survey").dialog({
+                    title: "Survey",
+                    message: h
+                }).on("hide", function(){
+                    console.log("hide");
+                    W.location.hash = "";
+                });
+            }
+        });       
+
         $("#survey").html("").survey({
             questions: convertToSurvey(obj),
             finish: function (survey) {
+                $(".survey-intro").hide();
+                
                 var results = {};
 
                 for (var i = 0; i < survey.questions.length; i++) {
@@ -150,12 +172,13 @@
                         console.log(res);
                         var c = 1;
 
-                        var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr>' +
-                            '<tr><td class="swot-q swot-s"><div><h4>Strengths</h4></div></td><td class="swot-q swot-w"><div><h4>Weaknesses</h4></div></td></tr>' +
+                        var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h h2" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr></tbody>' +
+                            '<thead><th class="swot-a h4" colspan="2">SWOT Analysis</th></thead>'+
+                            '<tbody class="swot-qc"><tr><td class="swot-q swot-s"><div><h4>Strengths</h4></div></td><td class="swot-q swot-w"><div><h4>Weaknesses</h4></div></td></tr>' +
                             '<tr><td class="swot-q swot-o"><div><h4>Opportunities</h4></div></td><td class="swot-q swot-t"><div><h4>Threats</h4></div></td></tr></tbody></table></div>';
 
                         $(".survey-conclusion").remove();
-                        $(".survey-buttons, #survey").hide();
+                        $(".survey-toolbar, #survey").hide();
 
                         var results = $('<div class="survey-conclusion"></div>');
 
@@ -170,14 +193,15 @@
                                     
                         var color = getColor(res.overallScore);
 
-                        var overallResultsTable = $(tpl.replace('col-xl-6 col-12', 'col-12')).appendTo(vis);
-                        overallResultsTable.addClass("overall").find('.swot-h').text("Overall Results: " + res.issuer.company + " (" + res.issuer.stage +  ")");
+                        var overallResultsTable = $(tpl.replace('col-xl-6 col-12', 'col-sm-12 offset-sm-0 col-lg-6 offset-lg-3')).appendTo(vis);
+                        overallResultsTable.addClass("overall").find('.swot-h').text("ISV Canvas Maturity Score");
                         
-                        $('<p class="tcms-issuer"><em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress +')<em></p>').appendTo(info);
+                        $('<p class="tcms-issuer"><em> ' + res.issuer.company + ' (' + res.issuer.stage +  ')<em><br/>').appendTo(info);
+                        $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress +')<em></p>').appendTo(info);
 
                         $('<div></div>').appendTo(overallResultsTable.find(".swot-g")).chart({
                             type: "circular",
-                            title: "TCMS Maturity Score",
+                            title: "",
                             outerClass: "tcms-score",
                             color: toRGB(shade(color)),
                             fillColor: toRGB(color),
@@ -202,12 +226,13 @@
 
                             ar.push({key: key, weight: group.weightPercent, name: group.name});
 
-                            $('<a name="grp-' + key +'"></a>').appendTo(vis);
+                            //$('<a name="grp-' + key +'"></a>').appendTo(vis);
                             var table = $(tpl).appendTo(vis);
+                            table.attr("id", 'grp-' + key);
                             
                             table.addClass(key);
 
-                            table.find('.swot-h').text(group.name);
+                            table.find('.swot-h:first').text(group.name);
                             
                             color = getColor(group.score);
 
@@ -240,9 +265,8 @@
                                             var c = m ? 'swot-cp': 'swot-np';
                                             var ic = m ? 'close' : 'check';
 
-                                            var liSub = $('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic +'"></span>' + se[elem].description +'</li>').appendTo(ulSub)
+                                            var liSub = $('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic +'"></span><a href="#info:' + se[elem].answer + '">' + se[elem].description +'</a></li>').appendTo(ulSub)
                                         }
-                                        
                                     }
                                 }                                
                             }
@@ -266,7 +290,7 @@
                         for(var a in ar){
                             var ul = null;
                             for(var quad in quads){
-                                var q = ".swot-q.swot-" + quads[quad];
+                                var q = ".swot-q.swot-" + quads[quad] + ">div:first";
                                 var el = overallResultsTable.find(q);
                                 var gEl = $('div.tcms-result.' + ar[a].key + ' ' + q );
                                 var n = 0;
@@ -289,7 +313,7 @@
                         }
                         
                         var el = overallResultsTable.find('.swot-q').each(function(){
-                            var td = $(this);
+                            var td = $(this).find(">div:first");
                             if(td.find(".swot-gr-name").length == 0){
                                 $('<div class="swot-gr-name">None</div>').appendTo(td);
                             }
@@ -303,6 +327,8 @@
                     }
               });
             }
+        }).on("ssr.progress", function(e, percent){
+            $(".survey-progress").text(percent + "%");
         });
     }).fail(function(j, status, error) { $("#survey").html("Sorry..." + status + " " + error) });
 

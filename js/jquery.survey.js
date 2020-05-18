@@ -4,6 +4,7 @@
 ;
 (function ($, W, D, undefined) {
     'use strict';
+
     var pluginName = "survey",
         defaults = {
             selector: ".survey-container",
@@ -28,18 +29,7 @@
         self.debug = D.location.hostname == "localhost";
 
         var src = self.$element.attr(self.debug ? "data-src-dbg" : "data-src") || self.options.src;
-
         
-        var surveyData = {
-            questions: [],
-            rules: {
-                strengths: [],
-                conflicts: [],
-                risks: [],
-                tags: []
-            }
-        };
-
         if (src) {
             $.getJSON(src, function (json) {
                 self.options.questions = convertToSurvey(json);
@@ -55,6 +45,13 @@
 
         init: function () {
             var self = this;
+
+            W.addEventListener('beforeunload', (event) => {
+                if (!self.completed)
+                    event.returnValue = "Are you sure you want to leave?";
+            });
+
+
             self.cycle = 0;
             self.$element.addClass("survey-container");
             self.addButtons();
@@ -81,31 +78,60 @@
 
             $('#nextBtn').click(function () {
                 var ok = true;
+                var numUnanwered = 0;
                 for (var i = self.options.firstQuestionDisplayed; i <= self.options.lastQuestionDisplayed; i++) {
-                    if (self.questions[i]['required'] === true && !self.getQuestionAnswer(self.questions[i])) {
-                        var ans = $('.survey-container > div.question:nth-child(' + (i + 1) + ')');
-                        ans.find(".answer").addClass("missing");
-                        ans.find('> .required-message').show();
-                        ok = false;
+                    if (!self.getQuestionAnswer(self.questions[i])) {
+                        numUnanwered++;
+                        if (self.questions[i]['required'] === true) {
+                            var ans = $('.survey-container > div.question:nth-child(' + (i + 1) + ')');
+                            ans.find(".answer").addClass("missing");
+                            ans.find('> .required-message').show().get(0).scrollIntoView();
+                            ok = false;
+                        }
                     }
                 }
                 if (!ok)
-                    return
+                    return;
 
-                if ($('#nextBtn').text().indexOf('Continue') === 0) {
-                    self.showNextQuestionSet();
+                var next = function () {
+
+                    if ($('#nextBtn').text().indexOf('Continue') === 0) {
+                        self.showNextQuestionSet();
+                    }
+                    else {
+                        self.completed = true;
+                        self.options.finish(self);
+                    }
                 }
-                else {
-                    self.options.finish(self);
+
+                if (numUnanwered) {
+
+                    $("body").dialog({
+                        title: "Survey",
+                        message: "Are you sure you want to skip " + numUnanwered + " question" + (numUnanwered == 1 ? "" : "s") + " in " + $("#survey").find(".question:visible h2:first").text() + "?"
+                    }).one({
+                        confirm: function () {
+                            next();
+                            
+                        }
+                    });
                 }
+                else
+                    next();
             });
             this.showNextQuestionSet();
         },
 
         addButtons: function () {
             var self = this;
-            var btns = $('<div class="btn-group survey-buttons"><a id="backBtn" href="#" class="button btn btn-default">« Back</a><a id="nextBtn" href="#" class="button btn btn-primary">Continue »</a><a href="" class="button btn">Restart</a></div>');
-            btns.insertAfter(self.$element);
+            self.toolbar = $('<div class="survey-toolbar"><div class="btn-group"><a id="backBtn" href="#" class="button btn btn-default">« Back</a><a id="nextBtn" href="#" class="button btn btn-primary">Continue »</a></div><span class="survey-progress"></span></div>');
+            var tb = self.$element.attr("data-toolbar");
+            if (self.toolbar) {
+                self.toolbar.appendTo($(tb));
+            }
+            else {
+                self.toolbar.insertAfter(self.$element);
+            }
         },
 
         destroy: function () {
@@ -163,7 +189,7 @@
             var questionTextElement = $('<div class="question-text"></div>');
             var questionAnswerElement = $('<div class="answer"></div>');
             var questionCommentElement = $('<div class="comment"></div>');
-            
+
 
             questionElement.appendTo($('.survey-container'));
             questionElement.append(questionTextElement);
@@ -179,7 +205,7 @@
                 question.options.forEach(function (option) {
                     var opt = self.getOption(option);
                     var label = $('<label class="radio"><input type="radio" value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
-                    if(question.inline) label.addClass("inline col-xs-10, col-sm-4");
+                    if (question.inline) label.addClass("inline col-xs-10, col-sm-4");
                     label.attr("title", opt.tooltip);
                     questionAnswerElement.append(label);
                     i++;
@@ -192,7 +218,7 @@
                     var opt = self.getOption(option);
                     var label = $('<label class="radio"><input type="checkbox" value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
                     label.attr("title", opt.tooltip);
-                    if(question.inline) label.addClass("inline col-xs-10, col-4");
+                    if (question.inline) label.addClass("inline col-xs-10, col-4");
                     questionAnswerElement.append(label);
                     i++;
                 });
@@ -215,15 +241,15 @@
             }
             else if (question.type === 'text-field-small') {
                 questionElement.addClass('text-field-small');
-                questionAnswerElement.append('<input type="text" value="" class="text" name="' + question.id + '">');
+                questionAnswerElement.append('<input type="text" value="" class="text form-control" name="' + question.id + '">');
             }
             else if (question.type === 'email') {
                 questionElement.addClass('text-field-email');
-                questionAnswerElement.append('<input type="email" value="" class="text" name="' + question.id + '">');
+                questionAnswerElement.append('<input type="email" value="" class="text form-control" name="' + question.id + '">');
             }
             else if (question.type === 'text-field-large') {
                 questionElement.addClass('text-field-large');
-                questionAnswerElement.append('<textarea rows="8" cols="0" class="text" name="' + question.id + '">');
+                questionAnswerElement.append('<textarea rows="8" cols="0" class="text form-control" name="' + question.id + '">');
             }
             if (question.required === true) {
                 var last = questionTextElement.find(':last');
@@ -249,6 +275,12 @@
             });
         },
 
+        setPercentage: function(){
+            var self = this;
+            var pct = Math.round(self.options.firstQuestionDisplayed / self.options.questions.length * 100.0, 0);
+            self.$element.trigger("ssr.progress", [ pct ]);            
+        },
+
         showNextQuestionSet: function () {
             var self = this;
             self.hideAllQuestions();
@@ -262,6 +294,8 @@
             } while (self.options.lastQuestionDisplayed < self.questions.length - 1);
 
             self.doButtonStates();
+            self.setPercentage();
+            $('.survey-container').get(0).scrollIntoView();
         },
 
         showPreviousQuestionSet: function () {
@@ -277,6 +311,8 @@
             } while (self.options.firstQuestionDisplayed > 0);
 
             this.doButtonStates();
+            self.setPercentage();
+            $('.survey-container').get(0).scrollIntoView();
         },
 
         doButtonStates: function () {
