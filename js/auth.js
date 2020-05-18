@@ -4,7 +4,7 @@
 (function ($, W, D, undefined) {
   const msalConfig = {
     auth: {
-      clientId: "f8e2742d-55a2-404b-923d-3758fae1e93d",
+      clientId: "59d19f8c-9524-4667-be2c-b9406dba21c8",
     },
   };
 
@@ -16,7 +16,7 @@
   });
 
   var loginRequest = {
-    scopes: ["user.read"], // optional Array<string>
+    scopes: ["Read","Save"], // optional Array<string>
   };
   $("#login").on("click", (e) => {
     msalInstance
@@ -42,7 +42,7 @@ function getApiToken() {
   // if the user is already logged in you can acquire a token
   if (window.msalInstance.getAccount()) {
     var tokenRequest = {
-      scopes: ["user.read"],
+     scopes: ["Read","Save"],
     };
     return window.msalInstance
       .acquireTokenSilent(tokenRequest)
