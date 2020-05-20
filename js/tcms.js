@@ -13,6 +13,30 @@
     else
         src = "https://tcmsapi.azurewebsites.net/"    
 
+    $(W).on('hashchange load', function (e) {
+        var h = W.location.hash.substr(1);
+        if(h.startsWith("info:")){
+
+            // i + "/" + se[elem].isMissingAnswer + "/" + topic + "/" + se[elem].answer + "/" + se[elem].description;
+            //W.surveyResults = {issuer: {stage: "established ISV"}};
+            var p = decodeURI(h.substr(5)).replace('//','/').split('/');
+
+            var msg = p[1]=="true" ? "Not having" : "Having";
+            msg += " " + p[4] ;
+            msg += " is considered " + ( p[0].startsWith('O') ? "an ": "a " ) + p[0];
+            msg += " in the " + W.surveyResults.issuer.stage + " stage";
+
+            msg += '<p class="swot-more-info"><a href=""><span class="ti-info ti-fill"></span> More information</a></p>'
+
+            $("#survey").dialog({
+                title: p[2],
+                message: msg
+            }).on("hide", function(){
+                console.log("hide");
+                W.location.hash = "";
+            });
+        }
+    });       
 
     $("#signout").click(function(){
         $(this).auth({action: "signout"});
@@ -24,11 +48,8 @@
 
         $(this).auth({action: "login"}).on("ssr.loggedin", function(e, account){
             W.account = account;
-            
             $("#survey").html('Loading...');
-
             takeSurvey();
-            
         });
         e.returnValue = false;
         return false;
@@ -160,24 +181,6 @@
     function takeSurvey(){
         $.getJSON(src + "survey", function (obj) {        
 
-            $(W).on('hashchange load', function (e) {
-                
-
-                var h = W.location.hash.substr(1);
-
-                console.log(h);
-
-                if(h.startsWith("info:")){
-                    $("#survey").dialog({
-                        title: "Survey",
-                        message: h
-                    }).on("hide", function(){
-                        console.log("hide");
-                        W.location.hash = "";
-                    });
-                }
-            });       
-
             $("#survey").html("").survey({
                 questions: convertToSurvey(obj),
                 finish: function (survey) {
@@ -215,6 +218,8 @@
                         dataType: "json",
                         success: function(res){
                             console.log(res);
+                            W.surveyResults = res;
+
                             var c = 1;
 
                             var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h h2" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr></tbody>' +
@@ -310,7 +315,9 @@
                                                 var c = m ? 'swot-cp': 'swot-np';
                                                 var ic = m ? 'close' : 'check';
 
-                                                var liSub = $('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic +'"></span><a href="#info:' + se[elem].answer + '">' + se[elem].description +'</a></li>').appendTo(ulSub)
+                                                var path = i + "/" + se[elem].isMissingAnswer + "/" + topic + "/" + se[elem].answer + "/" + se[elem].description;
+
+                                                var liSub = $('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic +'"></span><a href="#info:' + encodeURI(path) + '">' + se[elem].description +'</a></li>').appendTo(ulSub)
                                             }
                                         }
                                     }                                

@@ -154,6 +154,10 @@ footer{
       min-width: 15em;
     }
 
+    .modal-sm {
+      min-width: 60%;
+    }
+
     .form-control:focus {
       color: #495057;
       background-color: #fff;

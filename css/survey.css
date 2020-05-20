@@ -363,3 +363,17 @@ td.swot-q > div > h4{
   background-color: transparent;
   color: #666;
 }
+
+span.ti-fill {
+  display: inline-block;
+  padding: 5px 5px;
+  background-color: #E15E00;
+  color: white;
+  border-radius: 10px;
+}
+
+.swot-more-info{
+  margin-top: 2em;
+  padding: 1em;
+  border-top: 1px solid #ccc;
+}
