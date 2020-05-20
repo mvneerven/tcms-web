@@ -26,7 +26,9 @@
             msg += " is considered " + ( p[0].startsWith('O') ? "an ": "a " ) + p[0];
             msg += " in the " + W.surveyResults.issuer.stage + " stage";
 
-            msg += '<p class="swot-more-info"><a href=""><span class="ti-info ti-fill"></span> More information</a></p>'
+            var link = "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3];
+
+            msg += '<p class="swot-more-info"><a target="_blank" href="' + link + '"><span class="ti-info ti-fill"></span> More information</a></p>'
 
             $("#survey").dialog({
                 title: p[2],
