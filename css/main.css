@@ -155,7 +155,7 @@ footer{
     }
 
     .modal-sm {
-      min-width: 60%;
+      min-width: 50%;
     }
 
     .form-control:focus {
@@ -164,4 +164,21 @@ footer{
       border-color: #FFD1B1;
       outline: 0;
       box-shadow: 0 0 0 0.2rem #FFE5D3;
+  }
+
+  .img-fluid {
+    -webkit-box-shadow: 10px 10px 26px -1px rgba(0,0,0,0.42);
+    -moz-box-shadow: 10px 10px 26px -1px rgba(0,0,0,0.42);
+    box-shadow: 10px 10px 26px -1px rgba(0,0,0,0.42);
+  }
+
+  .survey-cta {
+    min-width: 15em;
+    font-size: 1.3em;
+  }
+
+  .survey-cta > span {
+    display: inline-block;
+    color: white;
+    
   }

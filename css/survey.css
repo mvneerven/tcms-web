@@ -377,3 +377,11 @@ span.ti-fill {
   padding: 1em;
   border-top: 1px solid #ccc;
 }
+
+.survey-intro{
+  display: none;
+}
+
+.signed-in .survey-intro {
+  display: block;
+}

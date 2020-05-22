@@ -46,9 +46,15 @@
         return false;
     });
 
+    $("#tech-knowledge").on("change", function(){
+
+        $("#login").toggleClass("disabled");
+    });
+    
     $("#login").click(function(e){
 
         $(this).auth({action: "login"}).on("ssr.loggedin", function(e, account){
+            $("body").addClass("signed-in");
             W.account = account;
             $("#survey").html('Loading...');
             takeSurvey();
