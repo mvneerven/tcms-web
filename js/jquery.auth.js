@@ -25,7 +25,7 @@
     });
 
     var loginRequest = {
-        scopes: ["https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read", "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
+         scopes: ["email", "openid","https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read",  "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
     };
 
     function Plugin(element, options) {
