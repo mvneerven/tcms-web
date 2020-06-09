@@ -54,7 +54,7 @@
     border-color:rgba(244,144,154,0.4);
 }
 
-.survey-container .question label span:hover {
+.survey-container:not(.taken) .question label span:hover {
     background-color: rgba(219,221,224, 0.5);
     border-color:rgba(244,144,154,0.2);
 }

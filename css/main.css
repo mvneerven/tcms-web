@@ -101,11 +101,11 @@ footer{
       color: #000;
   }
   
-  #survey-canvas  .survey-container .question label span:hover{
+  #survey-canvas  .survey-container:not(.taken) .question label span:hover{
     border-color: #FF8B38;
   }
 
-  #survey-canvas .survey-container .question label :checked + span{
+  #survey-canvas .survey-container:not(.taken) .question label :checked + span{
     border-color: #FF8B38;
   }
 

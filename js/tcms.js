@@ -389,10 +389,13 @@
                                     }
                                 });
 
-                                console.log(ar);
+                                // console.log(ar);
 
 
-                                $("#survey").insertAfter(results).find(".question").show().find("input").addClass("disabled").attr("disabled", "disabled");
+                                $("#survey").insertAfter(results)
+                                    .addClass("taken")
+                                    .find(".question").show()
+                                    .find("input").addClass("disabled").attr("disabled", "disabled");
 
                             },
                             failure: function(errMsg) {
