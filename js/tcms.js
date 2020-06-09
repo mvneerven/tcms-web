@@ -216,7 +216,6 @@
                         results[dict[i].id] = result;
 
                     }
-                    console.log(results);
 
                     W.getApiToken().then(function(token){
                         $.ajax({
@@ -246,6 +245,8 @@
                                 //TODO disable, not hide
                                 //$(".survey-toolbar, #survey").hide();
                                 $(".survey-toolbar").hide();
+
+                                
 
                                 var results = $('<div class="survey-conclusion"></div>');
 
@@ -389,6 +390,9 @@
                                 });
 
                                 console.log(ar);
+
+
+                                $("#survey").insertAfter(results).find(".question").show().find("input").addClass("disabled").attr("disabled", "disabled");
 
                             },
                             failure: function(errMsg) {
