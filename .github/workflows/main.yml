@@ -13,4 +13,4 @@ jobs:
         with:
           source_dir: ./
           container_name: $web
-          connection_string: ${{ secrets.ConnectionString }}
+          connection_string: ${{ secrets.TCMS-WEB_Connection_String }}
