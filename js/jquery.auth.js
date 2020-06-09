@@ -24,6 +24,40 @@
         // handle redirect response or error
     });
 
+    W.getApiToken = function () {
+        // if the user is already logged in you can acquire a token
+        if (window.msalInstance.getAccount()) {
+            var tokenRequest = {
+                scopes: ["https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read", "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
+            };
+            return window.msalInstance
+                .acquireTokenSilent(tokenRequest)
+                .then((response) => {
+                    // get access token from response
+                    // response.accessToken
+                    return "Bearer " + response.accessToken;
+                })
+                .catch((err) => {
+                    // could also check if err instance of InteractionRequiredAuthError if you can import the class.
+                    if (err.name === "InteractionRequiredAuthError") {
+                        return msalInstance
+                            .acquireTokenPopup(tokenRequest)
+                            .then((response) => {
+                                // get access token from response
+                                // response.accessToken
+
+                                return "Bearer " + response.accessToken;
+                            })
+                            .catch((err) => {
+                                // handle error
+                            });
+                    }
+                });
+        } else {
+            // user is not logged in, you will need to log them in to acquire a token
+        }
+    };
+
     var loginRequest = {
          scopes: ["email", "openid","https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read",  "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
     };
@@ -40,39 +74,7 @@
 
     Plugin.prototype = {
 
-        getApiToken: function () {
-            // if the user is already logged in you can acquire a token
-            if (window.msalInstance.getAccount()) {
-                var tokenRequest = {
-                    scopes: ["https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read", "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
-                };
-                return window.msalInstance
-                    .acquireTokenSilent(tokenRequest)
-                    .then((response) => {
-                        // get access token from response
-                        // response.accessToken
-                        return "Bearer " + response.accessToken;
-                    })
-                    .catch((err) => {
-                        // could also check if err instance of InteractionRequiredAuthError if you can import the class.
-                        if (err.name === "InteractionRequiredAuthError") {
-                            return msalInstance
-                                .acquireTokenPopup(tokenRequest)
-                                .then((response) => {
-                                    // get access token from response
-                                    // response.accessToken
-
-                                    return "Bearer " + response.accessToken;
-                                })
-                                .catch((err) => {
-                                    // handle error
-                                });
-                        }
-                    });
-            } else {
-                // user is not logged in, you will need to log them in to acquire a token
-            }
-        },
+        
 
 
         init: function () {
