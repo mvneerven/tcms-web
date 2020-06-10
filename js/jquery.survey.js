@@ -67,6 +67,7 @@
 
             $('.survey-container input').click(function (e) {
                 $(e.target).closest(".missing").removeClass("missing").closest(".question").find('> .required-message').hide();
+                $(e.target).closest(".invalid").removeClass("invalid").closest(".question").find('> .validation-message').hide();
             });
 
             $('#backBtn').click(function () {
@@ -78,10 +79,11 @@
 
             $('#nextBtn').click(function () {
                 var ok = true;
-                var numUnanwered = 0;
+                var numUnanswered = 0;
                 for (var i = self.options.firstQuestionDisplayed; i <= self.options.lastQuestionDisplayed; i++) {
-                    if (!self.getQuestionAnswer(self.questions[i])) {
-                        numUnanwered++;
+                    var res = self.getQuestionAnswer(self.questions[i]);
+                    if (!res.value) {
+                        numUnanswered++;
                         if (self.questions[i]['required'] === true) {
                             var ans = $('.survey-container > div.question:nth-child(' + (i + 1) + ')');
                             ans.find(".answer").addClass("missing");
@@ -89,6 +91,15 @@
                             ok = false;
                         }
                     }
+                    else if(!res.valid){
+                    
+                        var ans = $('.survey-container > div.question:nth-child(' + (i + 1) + ')');
+                        ans.find(".answer").addClass("invalid");
+                        ans.find('> .validation-message').show().get(0).scrollIntoView();
+                        ok = false;
+                    
+                    }
+
                 }
                 if (!ok)
                     return;
@@ -104,11 +115,11 @@
                     }
                 }
 
-                if (numUnanwered) {
+                if (numUnanswered) {
 
                     $("body").dialog({
                         title: "Survey",
-                        message: "Are you sure you want to skip " + numUnanwered + " question" + (numUnanwered == 1 ? "" : "s") + " in " + $("#survey").find(".question:visible h2:first").text() + "?"
+                        message: "Are you sure you want to skip " + numUnanswered + " question" + (numUnanswered == 1 ? "" : "s") + " in " + $("#survey").find(".question:visible h2:first").text() + "?"
                     }).one({
                         confirm: function () {
                             next();
@@ -139,29 +150,40 @@
         },
 
         getQuestionAnswer: function (question) {
+            var result = {
+                value: null,
+                valid: true
+            };
             var self = this;
-            var result;
 
             if (question.type === 'single-select') {
-                result = $('input[type="radio"][name="' + question.id + '"]:checked').val();
+                result.value = $('input[type="radio"][name="' + question.id + '"]:checked').val();
             }
             else if (question.type === 'multi-select') {
                 var values = new Array();
                 $.each($('input[type="checkbox"][name="' + question.id + '"]:checked'), function () {
                     values.push($(this).val());
                 });
-                result = values;
+                result.value = values;
             }
             else if (question.type === 'single-select-oneline') {
-                result = $('input[type="radio"][name="' + question.id + '"]:checked').val();
-            }
-            else if (question.type === 'text-field-small' || question.type === 'text-field-email') {
-                result = $('input[name=' + question.id + ']').val();
+                result.value = $('input[type="radio"][name="' + question.id + '"]:checked').val();
             }
             else if (question.type === 'text-field-large') {
-                result = $('textarea[name=' + question.id + ']').val();
+                result.value = $('textarea[name=' + question.id + ']').val();
             }
-            return result ? result : undefined;
+            else if (question.type.startsWith('text-field-')) {
+                var elm = $('input[name=' + question.id + ']');
+                var value = elm.val();
+                if(value && value.length && elm.length) {
+                    var el = elm.get(0);
+                    if(el.checkValidity && !el.checkValidity()){                        
+                        result.valid = false;
+                    }
+                }
+                result.value = value;
+            }
+            return result;
         },
 
         getOption: function (option) {
@@ -245,6 +267,11 @@
                 questionAnswerElement.append('<input type="email" value="" class="text form-control" name="' + question.id + '">');
                 
             }
+            else if (question.type === 'text-field-url') {
+                questionElement.addClass('text-field-small');
+                questionAnswerElement.append('<input type="url" value="" class="text form-control" name="' + question.id + '">');
+                
+            }
             else if (question.type === 'text-field-large') {
                 questionElement.addClass('text-field-large');
                 questionAnswerElement.append('<textarea rows="8" cols="0" class="text form-control" name="' + question.id + '">');
@@ -254,6 +281,7 @@
                 (last.length ? last : questionTextElement).append('<span class="required-asterisk" aria-hidden="true">*</span>');
             }
             questionAnswerElement.after('<div class="required-message">This is a required question</div>');
+            questionAnswerElement.after('<div class="validation-message">This is an invalid entry</div>');
             questionElement.hide();
 
             if (question.group && question.group != self.curGroup) {
@@ -274,7 +302,7 @@
             $('.question:visible').each(function (index, element) {
                 $(element).hide();
             });
-            $('.required-message').each(function (index, element) {
+            $('.required-message, .validation-message').each(function (index, element) {
                 $(element).hide();
             });
         },

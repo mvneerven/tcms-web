@@ -31,8 +31,12 @@
 }
 
 .survey-container .answer.missing {
-    border-color:rgba(244,144,154,0.3);
+  border-color:rgba(244,144,154,0.3);
 }
+.survey-container .answer.invalid {
+  border-color:rgba(244,60,20,1);
+}
+
 .survey-container .question-text{
     font-size: 18px;
     margin-top: 20px;
@@ -44,9 +48,13 @@
     font-style: italic;
 }
 
+.survey-container .validation-message, .survey-container .required-message{
+    font-size: small;
+}
+
 .survey-container .required-message {
     color: #C42B2B;
-    font-size: small;
+    
 }
 
 .survey-container .question label :checked + span {

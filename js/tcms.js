@@ -65,13 +65,12 @@
 
 
     function convertQType(id, type){
-        if(id == "email")
-            return "text-field-email";
-        
         switch(type){
             case "single" : return "single-select";
             case "multiple" : return "multi-select";
-            default: return "text-field-small";
+            case "url" : return "text-field-url";
+            case "email" : return "text-field-email";
+            default: return "text-field-small";case "url" : return "text-field-url";
         }
     };
 
@@ -161,7 +160,12 @@
                     options.push(comp);
                     dictA.answers.push(comp);
                     break;
-                    
+                case "website":
+                    var site = "https://" + W.account.userName.split('@')[1];
+                    options.push(site);
+                    dictA.answers.push(site);
+                    break;
+                        
                 }
                 
                 var q = {
@@ -187,9 +191,11 @@
     };
 
     function takeSurvey(){
-        $.getJSON(src + "survey", function (obj) {        
-
-            $("#survey").html("").survey({
+        var sv = $("#survey");
+        var version  = sv.attr("data-version") || "";
+        $.getJSON(src + "survey/" + version , function (obj) {        
+            
+            sv.html("").survey({
                 questions: convertToSurvey(obj),
                 finish: function (survey) {
                     $(".survey-intro").hide();
@@ -199,13 +205,13 @@
                     for (var i = 0; i < survey.questions.length; i++) {
                         var result = [];
                         var q = survey.questions[i];
-                        var a = survey.getQuestionAnswer(q);
+                        var a = survey.getQuestionAnswer(q).value;
                         if(Array.isArray(a)){
                             for(var k in a){
                                 result.push(dict[i].answers[a[k]]);
                             }
                         }
-                        else if(q.type == "text-field-small"){
+                        else if(q.type.startsWith("text-field-")){
                             result.push(a);
                         }
                         else{
@@ -218,10 +224,14 @@
                     }
 
                     W.getApiToken().then(function(token){
+                        var obj = {
+                            version: version,
+                            results: results
+                        };
                         $.ajax({
                             type: "POST",
                             url: src + "surveyresults",
-                            data: JSON.stringify(results),
+                            data: JSON.stringify(obj),
                             contentType: "application/json",
                             headers: {
                                 "Authorization": token

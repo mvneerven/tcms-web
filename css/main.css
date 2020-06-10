@@ -67,6 +67,11 @@ footer{
   #survey-canvas .survey-container .question-text, #survey-canvas .survey-container .required-message{
     color: #A04504;
   }
+  #survey-canvas .survey-container .question-text, #survey-canvas .survey-container .validation-message {
+    color: #A52104;
+  }
+
+  
 
   #toolbar .btn-primary:not(:disabled):not(.disabled).active, #toolbar .btn-primary:not(:disabled):not(.disabled):active, #toolbar .show>.btn-primary.dropdown-toggle {
     color: #fff;
