@@ -1,0 +1,16 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bacongobbler/azure-blob-storage-upload@v1.0.0
+        with:
+          source_dir: ./
+          container_name: $web
+          connection_string: ${{ secrets.STATIC_WEB_STORAGE_BLOBCONTAINER_CONNECTION }}
