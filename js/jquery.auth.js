@@ -12,7 +12,10 @@
 
     const msalConfig = {
         auth: {
-            clientId: "59d19f8c-9524-4667-be2c-b9406dba21c8",
+            clientId: "f2d88ec2-9d1d-4f25-a1ce-c9e1b2d395c9",
+            //Remove below for AAD Multi Tenant
+            authority: "https://isvcanvas.b2clogin.com/isvcanvas.onmicrosoft.com/B2C_1_isvcanvas",
+            validateAuthority: false
         },
     };
 
@@ -28,7 +31,7 @@
         // if the user is already logged in you can acquire a token
         if (window.msalInstance.getAccount()) {
             var tokenRequest = {
-                scopes: ["https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read", "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
+                scopes: ["openid", "https://isvcanvas.onmicrosoft.com/isvcanvasapisocial/Survey.Save"], // optional Array<string>
             };
             return window.msalInstance
                 .acquireTokenSilent(tokenRequest)
@@ -59,7 +62,7 @@
     };
 
     var loginRequest = {
-         scopes: ["email", "openid","https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read",  "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
+        scopes: ["email", "openid", "offline_access"] // optional Array<string>
     };
 
     function Plugin(element, options) {
@@ -74,7 +77,7 @@
 
     Plugin.prototype = {
 
-        
+
 
 
         init: function () {

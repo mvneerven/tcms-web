@@ -146,26 +146,27 @@
                     dictA.answers.push(aId);
                 }
 
-                switch(qId){
-                case "fullname":
-                    options.push(W.account.name);
-                    dictA.answers.push(W.account.name);
-                    break;
-                case "email":
-                    options.push(W.account.userName);
-                    dictA.answers.push(W.account.userName);
-                    break;
-                case "company":
-                    var comp = W.account.userName.split('@')[1];
-                    options.push(comp);
-                    dictA.answers.push(comp);
-                    break;
-                case "website":
-                    var site = "https://" + W.account.userName.split('@')[1];
-                    options.push(site);
-                    dictA.answers.push(site);
-                    break;
-                        
+                 switch (qId) {
+                    case "fullname":
+                        options.push(W.account.name);
+                        dictA.answers.push(W.account.name);
+                        break;
+                    case "email":
+                        //idToken.email or W.account.idToken.emails
+                        options.push(W.account.idToken.emails[0]);
+                        dictA.answers.push(W.account.idToken.emails[0]);
+                        break;
+                    case "company":
+                        var comp = W.account.idToken.emails[0].split('@')[1];
+                        options.push(comp);
+                        dictA.answers.push(comp);
+                        break;
+                    case "website":
+                        var site = "https://" + W.account.idToken.emails[0].split('@')[1];
+                        options.push(site);
+                        dictA.answers.push(site);
+                        break;
+
                 }
                 
                 var q = {
