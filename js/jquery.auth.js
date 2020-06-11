@@ -64,7 +64,6 @@
             });
 
             W.getApiToken = function () {
-                debugger;
 
                 // if the user is already logged in you can acquire a token
                 if (W.msalInstance.getAccount()) {
