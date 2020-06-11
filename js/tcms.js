@@ -200,6 +200,9 @@
             sv.html("").survey({
                 questions: convertToSurvey(obj),
                 finish: function (survey) {
+
+                    $('#nextBtn').attr("disabled", "disabled").addClass("disabled");
+
                     $(".survey-intro").hide();
 
                     var results = {};
@@ -409,6 +412,7 @@
                             },
                             failure: function(errMsg) {
                                 console.log(errMsg);
+                                $('#nextBtn').removeAttr("disabled").removeClass("disabled");
                             }
                     
                     
