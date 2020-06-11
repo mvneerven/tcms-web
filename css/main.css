@@ -50,6 +50,11 @@ footer{
     
   }
 
+  .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle{
+    background-color: #FF6A00;
+    border-color: #BE4F00;
+  }
+
   .btn.btn-primary
 
   footer #toolbar .btn{

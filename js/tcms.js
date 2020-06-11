@@ -16,11 +16,7 @@
     $(W).on('hashchange load', function (e) {
         var h = W.location.hash.substr(1);
         if(h.startsWith("info:")){
-
-            // i + "/" + se[elem].isMissingAnswer + "/" + topic + "/" + se[elem].answer + "/" + se[elem].description;
-            //W.surveyResults = {issuer: {stage: "established ISV"}};
             var p = decodeURI(h.substr(5)).replace('//','/').split('/');
-
             var msg = p[1]=="true" ? "Not having" : "Having";
             msg += " " + p[4] ;
             msg += " is considered " + ( p[0].startsWith('O') ? "an ": "a " ) + p[0];
@@ -47,15 +43,17 @@
     });
 
     $("#tech-knowledge").on("change", function(){
-
         $("#login").toggleClass("disabled");
+        var isDisabled = $("#login").is(".disabled");
+        $("#login")[ isDisabled ? "attr" : "removeAttr" ]("disabled", "disabled");
     });
     
-    $("#login").click(function(e){
-
-        $(this).auth({action: "login"}).on("ssr.loggedin", function(e, account){
+    $("[data-login]").click(function(e){
+        $(this).auth({action: "login", type: $(this).attr("data-login")}).on("ssr.loggedin", function(e, account){
             $("body").addClass("signed-in");
             W.account = account;
+            console.log(W.account);
+
             $("#survey").html('Loading...');
             takeSurvey();
         });
@@ -130,8 +128,6 @@
             }
 
             for(var qId in qList){
-                console.log(qId);
-
                 dictA = {
                     id: qId,
                     answers: []
@@ -152,20 +148,26 @@
                     dictA.answers.push(W.account.name);
                     break;
                 case "email":
-                    options.push(W.account.userName);
-                    dictA.answers.push(W.account.userName);
+                    options.push(W.account.email);
+                    dictA.answers.push(W.account.email);
                     break;
                 case "company":
-                    var comp = W.account.userName.split('@')[1];
-                    options.push(comp);
-                    dictA.answers.push(comp);
+                    if(W.account.type == "org"){
+                        var comp = W.account.email.split('@')[1];
+                        options.push(comp);
+                        dictA.answers.push(comp);
+                    }
                     break;
                 case "website":
-                    var site = "https://" + W.account.userName.split('@')[1];
-                    options.push(site);
-                    dictA.answers.push(site);
+                    if(W.account.type == "org"){
+                        var site = "https://" + W.account.email.split('@')[1];
+                        options.push(site);
+                        dictA.answers.push(site);
+                    }
                     break;
-                        
+                 
+                    
+                    
                 }
                 
                 var q = {
@@ -239,7 +241,7 @@
                             dataType: "json",
                             success: function(res){
                                 console.log(res);
-                                res.issuer.emailAddress = W.account.userName;
+                                res.issuer.emailAddress = W.account.email;
                                 W.surveyResults = res;
 
 
@@ -398,9 +400,6 @@
                                         $('<div class="swot-gr-name">None</div>').appendTo(td);
                                     }
                                 });
-
-                                // console.log(ar);
-
 
                                 $("#survey").insertAfter(results)
                                     .addClass("taken")
