@@ -56,6 +56,11 @@
 
             }
 
+            msalConfig.cache = {
+                cacheLocation: "sessionStorage",
+                storeAuthStateInCookie: true
+            }
+
             W.msalInstance = new Msal.UserAgentApplication(msalConfig);
 
             W.msalInstance.handleRedirectCallback((error, response) => {

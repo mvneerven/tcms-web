@@ -36,10 +36,6 @@
             });
         }
         else if(h.startsWith("/")){
-            if(!W.account){
-                W.account = W.sessionStorage.getItem('account');
-            }
-            
             var id = h.substr(1);
             rest("surveystorage?id=" + id ).then(function(obj){
                 showResults(obj);
@@ -67,12 +63,10 @@
         elm.auth({ action: "login", type: $(this).attr("data-login") }).on("ssr.loggedin", function (e, account) {
             $("body").addClass("signed-in");
             W.account = account;
-            W.sessionStorage.setItem('account', W.account);
+            
             console.log(W.account);
             W.getApiToken().then(function (token) {
                 W.account.token = token;
-
-                W.sessionStorage.setItem('account', W.account);
             });
             if(elm.attr("data-login")){
                 $("#survey").html('Loading...');
@@ -220,13 +214,16 @@
             url: src + url,
 
             contentType: "application/json",
-            headers: {
-                "Authorization": W.account.token
-            },
+            
             dataType: "json",
             success: function (res) {
             }
         };
+        if(W.account && W.account.token){
+            options.headers = {
+                "Authorization": W.account.token
+            }
+        }
         if (obj) {
             options.data = JSON.stringify(obj);
         }
@@ -239,12 +236,8 @@
     }
 
     function showResults(data) {
-        console.log(data);
-
         var res = data.surveyScore;
-        
-        res.issuer.name = W.account.name;
-        res.issuer.emailAddress = W.account.email;
+
         W.surveyResults = res;
         var c = 1;
 
