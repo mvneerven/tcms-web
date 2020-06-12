@@ -235,7 +235,16 @@
         W.location.hash = "#/" + id;
     }
 
+    function rawView(){
+        $("nav, footer, #survey, h1").hide();
+        $("div.container.content").removeClass("container").css({padding: "15px"});
+    }
+
     function showResults(data) {
+
+        if(W.location.search.indexOf('view') != -1)
+            rawView();
+
         var res = data.surveyScore;
 
         W.surveyResults = res;
