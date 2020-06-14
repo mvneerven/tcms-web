@@ -48,11 +48,12 @@
         init: function () {
             var self = this;
 
-            W.addEventListener('beforeunload', (event) => {
-                if (!self.completed)
-                    event.returnValue = "Are you sure you want to leave?";
-            });
-
+            if(!self.options.readOnly){
+                W.addEventListener('beforeunload', (event) => {
+                    if (!self.completed)
+                        event.returnValue = "Are you sure you want to leave?";
+                });
+            }
 
             self.cycle = 0;
             self.$element.addClass("survey-container");
