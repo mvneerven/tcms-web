@@ -393,3 +393,15 @@ span.ti-fill {
 .signed-in .survey-intro {
   display: block;
 }
+
+body.view-summary #survey-canvas table.swot .swot-qc, body.view-summary #survey-canvas  table.swot tr th.h4{
+  display: none;
+}
+
+body[class^="view-"] nav, body[class^="view-"] footer, body[class^="view-"] h1, body[class^="view-"] .survey-start {
+  display: none;
+}
+
+.tcms-issuer em{
+  font-size: 2em;
+}

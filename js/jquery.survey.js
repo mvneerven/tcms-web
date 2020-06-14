@@ -10,6 +10,8 @@
             selector: ".survey-container",
             getData: $.noop,
             questions: undefined,
+            answers: {},
+            readOnly: false,
             firstQuestionDisplayed: -1,
             lastQuestionDisplayed: -1,
             src: null,
@@ -62,7 +64,7 @@
             self.questions.forEach(function (question) {
                 qIx++;
                 question.id = qIx.toString();
-                self.generateQuestionElement(question);
+                self.generateQuestionElement(question, self.options.answers[question.name]);
             });
 
             $('.survey-container input').click(function (e) {
@@ -76,6 +78,8 @@
                     $('.survey-container').show();
                 }
             });
+
+            
 
             $('#nextBtn').click(function () {
                 var ok = true;
@@ -131,6 +135,13 @@
                     next();
             });
             this.showNextQuestionSet();
+
+            if(self.options.readOnly){
+                
+                self.$element.insertAfter(".survey-conclusion").addClass("taken").find(".question").show()
+                .find("input").addClass("disabled").attr("disabled", "disabled");
+            }
+
         },
 
         addButtons: function () {
@@ -201,15 +212,12 @@
             return { title: option, tooltip: tooltip };
         },
 
-        generateQuestionElement: function (question) {
+        generateQuestionElement: function (question, answer) {
             var self = this;
             var questionElement = $('<div id="' + question.id + '" class="question"></div>');
-
             var questionTextElement = $('<div class="question-text"></div>');
             var questionAnswerElement = $('<div class="answer"></div>');
             var questionCommentElement = $('<div class="comment"></div>');
-
-
             questionElement.appendTo($('.survey-container'));
             questionElement.append(questionTextElement);
             questionElement.append(questionCommentElement);
@@ -221,27 +229,33 @@
             if (question.type === 'single-select') {
                 questionElement.addClass('single-select');
                 var i = 0;
-                question.options.forEach(function (option) {
+
+                for(var name in question.options){
+                    var option = question.options[name];
                     var opt = self.getOption(option);
-                    var label = $('<label class="radio"><input type="radio" value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
+                    var checked = answer && answer.length && name == answer[0] ? " checked": "";
+                    
+                    var label = $('<label class="radio"><input type="radio" ' + checked + ' value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
                     if (question.inline) label.addClass("inline col-xs-10, col-sm-4");
                     label.attr("title", opt.tooltip);
                     questionAnswerElement.append(label);
                     i++;
-                });
+                }
             }
             else if (question.type === 'multi-select') {
                 questionElement.addClass('multi-select');
                 var i = 0;
-                question.options.forEach(function (option) {
+                
+                for(var name in question.options){
+                    var option = question.options[name];
                     var opt = self.getOption(option);
-                    var label = $('<label class="radio"><input type="checkbox" value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
+                    var checked = answer && answer.length && answer.find(e => e == name) ? "checked": "";
+                    var label = $('<label class="radio"><input type="checkbox" ' + checked +' value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
                     label.attr("title", opt.tooltip);
                     if (question.inline) label.addClass("inline col-xs-10, col-4");
                     questionAnswerElement.append(label);
                     i++;
-                });
-
+                }
                 questionCommentElement.html("Multiple answers possible");
 
             }
@@ -260,21 +274,21 @@
             }
             else if (question.type === 'text-field-small') {
                 questionElement.addClass('text-field-small');
-                questionAnswerElement.append('<input type="text" value="" class="text form-control" name="' + question.id + '">');
+                questionAnswerElement.append('<input type="text" value="' + (answer || "") +'" class="text form-control" name="' + question.id + '">');
             }
             else if (question.type === 'text-field-email') {
                 questionElement.addClass('text-field-email');
-                questionAnswerElement.append('<input type="email" value="" class="text form-control" name="' + question.id + '">');
+                questionAnswerElement.append('<input type="email" value="' + (answer || "") +'" class="text form-control" name="' + question.id + '">');
                 
             }
             else if (question.type === 'text-field-url') {
                 questionElement.addClass('text-field-small');
-                questionAnswerElement.append('<input type="url" value="" class="text form-control" name="' + question.id + '">');
+                questionAnswerElement.append('<input type="url" value="' + (answer || "") + '" class="text form-control" name="' + question.id + '">');
                 
             }
             else if (question.type === 'text-field-large') {
                 questionElement.addClass('text-field-large');
-                questionAnswerElement.append('<textarea rows="8" cols="0" class="text form-control" name="' + question.id + '">');
+                questionAnswerElement.append('<textarea rows="8" cols="0" class="text form-control" name="' + question.id + '">' + (answer || "") + '</textarea>');
             }
             if (question.required === true) {
                 var last = questionTextElement.find(':last');
