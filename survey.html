@@ -96,17 +96,17 @@
               <div class="control"><label><input id="tech-knowledge" type="checkbox" /> I have read and understand
                   this.</label> </div>
 
-              <div class="dropdown">
-                <button disabled id="login" class="btn btn btn-primary disabled dropdown-toggle" type="button"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Log in and start Survey
-                </button>
-                <div class="dropdown-menu" aria-labelledby="login">
+              <!-- <div class="dropdown"> -->
+              <button disabled id="login" class="btn btn btn-primary disabled" data-login="per" type="button"
+                aria-haspopup="true" aria-expanded="false">
+                Log in and start Survey
+              </button>
+              <!-- <div class="dropdown-menu" aria-labelledby="login">
                   <a data-login="org" class="dropdown-item" href="/">Using Microsoft organizational account</a>
                   <a data-login="per" class="dropdown-item" href="#">Using a personal account</a>
 
                 </div>
-              </div>
+              </div> -->
 
             </div>
           </div>
@@ -155,14 +155,14 @@
   <script type="text/javascript" src="https://alcdn.msftauth.net/lib/1.3.1/js/msal.min.js"></script>
   <script src="js/jquery.auth.js?v=1.2"></script>
   <script src="js/tcms.js?v=3.7"></script>
-  
+
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-169426273-1"></script>
   <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-169426273-1');
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-169426273-1');
   </script>
 
 </body>
