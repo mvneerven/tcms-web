@@ -129,23 +129,24 @@ footer{
   }
 
   
-  footer #toolbar {
+  #toolbar {
     margin-bottom: 20px;
     position: fixed;
-    display: inline-block;
-    margin-bottom: 100px;
-    margin-left: -80px;
-    bottom: 0px;
+    display: block;
+    margin-bottom: 35px;
+    width: 100%;
+    bottom: 0;
 }
   
     .app-info{
         padding: 1em;
+        font-size: x-small;
     }
 
     .survey-toolbar {
-      background-color: rgba(100,100,100, 0.2);
       border-radius: 5px;
       padding: 5px;
+      text-align: center;
     }
 
     .survey-toolbar .btn-group{
@@ -200,4 +201,19 @@ footer{
     display: inline-block;
     color: white;
     
+  }
+
+  #progress {
+    width: 0%;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    font-size: 1px;
+    height: 3px;
+    background-color: #FF6A00;
+  }
+
+
+  #survey .comment{
+    color: #FF6A00;
   }

@@ -496,7 +496,12 @@
                     }).fail(handleError);
                 }
             }).on("ssr.progress", function (e, percent) {
-                $(".survey-progress").text(percent + "%");
+                var elm = $("#progress");
+                if(elm.length  == 0)
+                    elm = $('<div id="progress"></div>').insertAfter($("nav"));
+
+                elm.animate({width: percent + "%"});
+
             }).on("ssr.group", function(e, grp){
                 if(W.surveyMode == "single"){
                     var q = $(".question:visible");
