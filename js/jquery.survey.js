@@ -11,7 +11,7 @@
             getData: $.noop,
             questions: undefined,
             answers: {},
-            readOnly: false,
+            mode: "normal", // normal, single, viewresults
             firstQuestionDisplayed: -1,
             lastQuestionDisplayed: -1,
             src: null,
@@ -48,7 +48,7 @@
         init: function () {
             var self = this;
 
-            if(!self.options.readOnly){
+            if(self.options.mode != "viewresults"){ 
                 W.addEventListener('beforeunload', (event) => {
                     if (!self.completed)
                         event.returnValue = "Are you sure you want to leave?";
@@ -56,7 +56,19 @@
             }
 
             self.cycle = 0;
-            self.$element.addClass("survey-container");
+
+            self.$element.addClass("survey-container").on("mouseup", ".question.single-select", function(e){
+                var elm = $(e.target);
+
+                elm.addClass("active");
+
+                setTimeout(function(){
+                    $('#nextBtn').click();
+
+                }, 200);
+            });
+           
+
             self.addButtons();
 
             self.questions = self.options.questions;
@@ -121,10 +133,15 @@
                 }
 
                 if (numUnanswered) {
+                    var text = self.options.mode == "single" 
+                        ? "Are you sure you want to skip this question?"
+                        : "Are you sure you want to skip " + numUnanswered + " question" + (numUnanswered == 1 ? "" : "s") + " in " + $("#survey").find(".question:visible h2:first").text() + "?"
 
                     $("body").dialog({
                         title: "Survey",
-                        message: "Are you sure you want to skip " + numUnanswered + " question" + (numUnanswered == 1 ? "" : "s") + " in " + $("#survey").find(".question:visible h2:first").text() + "?"
+                        message: text,
+                        confirm: "Yes, skip",
+                        dismiss: "No"
                     }).one({
                         confirm: function () {
                             next();
@@ -136,13 +153,24 @@
                     next();
             });
             this.showNextQuestionSet();
-
-            if(self.options.readOnly){
-                
+            
+            if(self.options.mode == "viewresults"){
                 self.$element.insertAfter(".survey-conclusion").addClass("taken").find(".question").show()
                 .find("input").addClass("disabled").attr("disabled", "disabled");
             }
+            else{
 
+                $("body").dialog({
+                    title: "Survey",
+                    message: '<p>Please take your time to fill out the form to the best of your knowledge.</p><p>Most questions can be skipped. If you don\'t know the answer, don\'t worry and skip it.</p>',
+                    dismissVisible: false,
+                    confirm: "Start survey!"
+                }).one({
+                    hide: function () {
+                        self.$element.trigger("ssr.started", [ true ]);            
+                    }
+                });
+            }
         },
 
         addButtons: function () {
@@ -215,11 +243,14 @@
 
         generateQuestionElement: function (question, answer) {
             var self = this;
-            var questionElement = $('<div id="' + question.id + '" class="question"></div>');
+            var questionElement = $('<div data-g="' + question.gId + '" data-q="' + question.name +'" id="' + question.id + '" class="question"></div>');
             var questionTextElement = $('<div class="question-text"></div>');
             var questionAnswerElement = $('<div class="answer"></div>');
             var questionCommentElement = $('<div class="comment"></div>');
             questionElement.appendTo($('.survey-container'));
+
+
+
             questionElement.append(questionTextElement);
             questionElement.append(questionCommentElement);
             questionElement.append(questionAnswerElement);
@@ -303,6 +334,7 @@
                 self.curGroup = question.group;
                 var headerElement = $('<h2>' + question.group + '</h2>');
                 questionElement.prepend(headerElement);
+
             }
 
             if(question.type.split('-')[0] == "text"){
@@ -332,16 +364,21 @@
             var self = this;
             self.hideAllQuestions();
             self.options.firstQuestionDisplayed = self.options.lastQuestionDisplayed + 1;
-
+            var g;
             do {
                 self.options.lastQuestionDisplayed++;
-                $('.survey-container > div.question:nth-child(' + (self.options.lastQuestionDisplayed + 1) + ')').show();
-                if (self.questions[self.options.lastQuestionDisplayed]['break_after'] === true)
+                g = $('.survey-container > div.question:nth-child(' + (self.options.lastQuestionDisplayed + 1) + ')').show().attr("data-g");
+                var showSingle = self.options.mode == "single" && g != "comp";
+
+                if (showSingle || self.questions[self.options.lastQuestionDisplayed]['break_after'] === true) 
                     break;
             } while (self.options.lastQuestionDisplayed < self.questions.length - 1);
 
+            self.$element.trigger("ssr.group", [ W.survey.groups[g] ]);            
+            
             self.doButtonStates();
             self.setPercentage();
+
             $('.survey-container').get(0).scrollIntoView();
         },
 
@@ -349,11 +386,10 @@
             var self = this;
             self.hideAllQuestions();
             self.options.lastQuestionDisplayed = self.options.firstQuestionDisplayed - 1;
-
             do {
                 self.options.firstQuestionDisplayed--;
                 $('.survey-container > div.question:nth-child(' + (self.options.firstQuestionDisplayed + 1) + ')').show();
-                if (self.options.firstQuestionDisplayed > 0 && this.questions[self.options.firstQuestionDisplayed - 1]['break_after'] === true)
+                if (self.options.firstQuestionDisplayed > 0 && (self.options.mode == "single" || this.questions[self.options.firstQuestionDisplayed - 1]['break_after'] === true))
                     break;
             } while (self.options.firstQuestionDisplayed > 0);
 

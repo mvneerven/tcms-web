@@ -9,7 +9,7 @@
 }
 
 .survey-container{
-    padding: 30px;
+    padding: 10px;
     margin-bottom: 30px;
 }
 .survey-container .answer{
@@ -62,11 +62,10 @@
     border-color:rgba(244,144,154,0.4);
 }
 
-.survey-container:not(.taken) .question label span:hover {
+.survey-container:not(.taken) .question label span:not(.active):hover {
     background-color: rgba(219,221,224, 0.5);
     border-color:rgba(244,144,154,0.2);
 }
-
 
 .survey-container label span{
     display: inline-block;

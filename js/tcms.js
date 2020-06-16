@@ -5,6 +5,10 @@
 (function ($, W, D, undefined) {
     'use strict';
 
+    // set mode
+    W.surveyMode = "single";
+
+
     if (window.JSON && !window.JSON.dateParser) {
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
         var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
@@ -25,6 +29,8 @@
     
     }
 
+    
+
     var dict = [];
     var src;
     var debug = D.location.hostname == "localhost";
@@ -41,7 +47,7 @@
             var msg = p[1] == "true" ? "Not having" : "Having";
             msg += " " + p[4];
             msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0];
-            msg += " in the " + W.surveyResults.issuer.stage + " stage";
+            msg += " in the " + W.assessment.surveyScore.issuer.stage + " stage";
 
             var link = "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3];
 
@@ -181,42 +187,13 @@
                     options[aId] = qObj.answers[aId].text;
                     dictA.answers.push(aId);
                 }
-
-                /*
-                if (W.account) {
-                    switch (qId) {
-                        case "fullname":
-                            options["value"] = W.account.name;
-                            dictA.answers.push(W.account.name);
-                            break;
-                        case "email":
-                            options["value"] = W.account.email;
-                            dictA.answers.push(W.account.email);
-                            break;
-                        case "company":
-                            if (W.account.type == "org") {
-                                var comp = W.account.email.split('@')[1];
-                                options["value"] = comp;
-                                dictA.answers.push(comp);
-                            }
-                            break;
-                        case "website":
-                            if (W.account.type == "org") {
-                                var site = "https://" + W.account.email.split('@')[1];
-                                options["value"] = site;
-                                dictA.answers.push(site);
-                            }
-                            break;
-                    }
-                }
-
-                */
-
+                
                 var q = {
                     name: qId,
                     text: qObj.text,
                     break_after: gIx == gCount,
                     group: gName,
+                    gId: g,
                     type: convertQType(qId, qObj.type),
                     options: options,
                     inline: qId == "pm",
@@ -267,12 +244,9 @@
         $("div.container.content").removeClass("container").css({ padding: "15px" });
     }
 
-    function showResults(storageData) {
-        
-        var res = storageData.surveyScore;
-
-        W.surveyResults = res;
-        var c = 1;
+    function showResults(assessment) {
+        W.assessment = assessment;
+        var res = assessment.surveyScore;
 
         var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h h2" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr></tbody>' +
             '<thead><th class="swot-a h4" colspan="2">SWOT Analysis</th></thead>' +
@@ -292,7 +266,7 @@
     
         
         $('<p class="tcms-issuer"><em> ' + res.issuer.company + ' (' + res.issuer.stage + ')<em><br/>').appendTo(info);
-        $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress + ')<em> at ' + JSON.dateParser("date", storageData.surveyDateTimeTaken) +'</p>').appendTo(info);
+        $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress + ')<em> at ' + JSON.dateParser("date", assessment.surveyDateTimeTaken) +'</p>').appendTo(info);
 
         if (showScores()) {
             var overallResultsTable = $(tpl.replace('col-xl-6 col-12', 'col-sm-12 offset-sm-0 col-lg-6 offset-lg-3')).appendTo(vis);
@@ -318,21 +292,15 @@
                 value: Math.round(res.reliability)
             }).attr("title", "Based on the percentage of questions answered.");
 
-
             var ar = [];
             for (var key in res.scores) {
                 var group = res.scores[key];
 
                 ar.push({ key: key, weight: group.weightPercent, name: group.name });
-
-                //$('<a name="grp-' + key +'"></a>').appendTo(vis);
                 var table = $(tpl).appendTo(vis);
                 table.attr("id", 'grp-' + key);
-
                 table.addClass(key);
-
                 table.find('.swot-h:first').text(group.name);
-
                 color = getColor(group.score);
 
                 $("<div></div>").appendTo(table.find(".swot-g")).chart({
@@ -378,9 +346,6 @@
                         $('<ul><li class="swot-none">None</li></ul>').appendTo(div);
                     }
                 });
-
-                c++;
-                if (c > 7) c = 0;
             }
 
             ar.sort(function (a, b) {
@@ -426,11 +391,12 @@
 
 
         if (showQuestions()) {
-            $.getJSON(src + "survey/" + storageData.surveyVersion, function (obj) {
+            $.getJSON(src + "survey/" + assessment.surveyVersion, function (obj) {
+                W.survey = obj;
                 sv.survey({
                     questions: convertToSurvey(obj),
-                    answers: storageData.surveyAnswers,
-                    readOnly: true
+                    answers: assessment.surveyAnswers,
+                    mode: "viewresults"
                 });
             });
         }
@@ -470,8 +436,9 @@
         var sv = $("#survey");
         var version = sv.attr("data-version") || "";
         $.getJSON(src + "survey/" + version, function (obj) {
-
+            W.survey = obj;
             sv.html("").survey({
+                mode: W.surveyMode,
                 questions: convertToSurvey(obj),
                 answers: {
                     fullname: W.account.name,
@@ -518,6 +485,19 @@
                 }
             }).on("ssr.progress", function (e, percent) {
                 $(".survey-progress").text(percent + "%");
+            }).on("ssr.group", function(e, grp){
+                if(W.surveyMode == "single"){
+                    console.log(grp);
+
+                    var q = $(".question:visible");
+                    if(q.find("h2").length == 0){
+                        q.prepend('<h2>' + grp.name  + '</h2>');
+                    }
+                }
+            }).on("ssr.started", function(e, on){
+
+                $("h1").removeClass("mt-5").animate({fontSize: "12pt", marginTop: "1rem"});
+
             });
         }).fail(function (j, status, error) { $("#survey").html("Sorry..." + status + " " + error) });
     }

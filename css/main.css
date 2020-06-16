@@ -111,9 +111,18 @@ footer{
       color: #000;
   }
   
-  #survey-canvas  .survey-container:not(.taken) .question label span:hover{
+  #survey-canvas  .survey-container:not(.taken) .question label span:not(.active):hover{
     border-color: #FF8B38;
   }
+
+  #survey-canvas  .survey-container:not(.taken) .question label span.active:hover{
+    background-color: #FF8B38;
+    -webkit-transition:background .2s;
+    -moz-transition:background .2s;
+    -o-transition:background .2s;
+    transition:background .2s
+  }
+  
 
   #survey-canvas .survey-container:not(.taken) .question label :checked + span{
     border-color: #FF8B38;

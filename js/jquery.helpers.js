@@ -9,7 +9,9 @@
 	    title: 'Modal title',
         message: 'One fine body&hellip;',
         confirm: 'OK',
-        dismiss: 'Cancel'
+        dismiss: 'Cancel',
+        confirmVisible: true,
+        dismissVisible: true,
     };
 
     //const colors = ["#CB6731", "#888","#EABD5D", "#CB5B5A", "#AC557A", "#8D4C7D", "#6B406E", "#40324F"];
@@ -50,8 +52,8 @@
             var elm = $(dlgTpl);
             $('.modal-title', elm).html(this.options.title);
             $('.message', elm).html(this.options.message);
-            $('.confirm', elm).html(this.options.confirm);
-            $('.dismiss', elm).html(this.options.dismiss);
+            $('.confirm', elm).html(this.options.confirm)[self.options.confirmVisible ? "show" : "hide"]();
+            $('.dismiss', elm).html(this.options.dismiss)[self.options.dismissVisible ? "show" : "hide"]();
 
             elm.on('click', '.confirm', function (event) {
                 elm.data('confirm', true);
