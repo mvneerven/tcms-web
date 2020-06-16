@@ -195,7 +195,7 @@ footer{
   .survey-cta {
     min-width: 15em;
     font-size: 1.3em;
-  }
+  } 
 
   .survey-cta > span {
     display: inline-block;
@@ -209,7 +209,7 @@ footer{
     margin: 0;
     line-height: 0;
     font-size: 1px;
-    height: 3px;
+    height: 5px;
     background-color: #FF6A00;
   }
 

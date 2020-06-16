@@ -436,6 +436,8 @@
         var sv = $("#survey");
         var version = sv.attr("data-version") || "";
 
+        $('<div id="progress"></div>').insertAfter($("nav"));
+
         $("body").dialog({
             title: "Survey",
             message: '<p>Please take your time to fill out the survey to the best of your knowledge.</p>' + 
@@ -497,9 +499,7 @@
                 }
             }).on("ssr.progress", function (e, percent) {
                 var elm = $("#progress");
-                if(elm.length  == 0)
-                    elm = $('<div id="progress"></div>').insertAfter($("nav"));
-
+                
                 elm.animate({width: percent + "%"});
 
             }).on("ssr.group", function(e, grp){
