@@ -53,11 +53,13 @@
                     if (!self.completed)
                         event.returnValue = "Are you sure you want to leave?";
                 });
+
+                self.addButtons();
             }
 
             self.cycle = 0;
 
-            self.$element.addClass("survey-container").on("mouseup", ".question.single-select", function(e){
+            self.$element.addClass("survey-container").on("mouseup", ".question.single-select:not(:last)", function(e){
                 var elm = $(e.target);
 
                 elm.addClass("active");
@@ -67,9 +69,6 @@
 
                 }, 200);
             });
-           
-
-            self.addButtons();
 
             self.questions = self.options.questions;
             var qIx = 0;
@@ -153,12 +152,14 @@
                     next();
             });
             this.showNextQuestionSet();
-            
+
             if(self.options.mode == "viewresults"){
                 self.$element.insertAfter(".survey-conclusion").addClass("taken").find(".question").show()
                 .find("input").addClass("disabled").attr("disabled", "disabled");
             }
             else{
+                
+
                 self.$element.trigger("ssr.start", [ true ]);
             }
 
