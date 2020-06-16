@@ -19,11 +19,11 @@
 
     const msalConfigPer = {
         auth: {
-            clientId: "f2d88ec2-9d1d-4f25-a1ce-c9e1b2d395c9" ,
-            authority: "https://isvcanvas.b2clogin.com/isvcanvas.onmicrosoft.com/B2C_1_isvcanvas",
+            clientId: "f2d88ec2-9d1d-4f25-a1ce-c9e1b2d395c9",
+            authority: "https://isvcanvas.b2clogin.com/isvcanvas.onmicrosoft.com/B2C_1A_signup_signinAAD",
             validateAuthority: false
         }
-    };    
+    };
 
     var loginRequest = {
         scopes: ["email", "openid", "offline_access"] // optional Array<string>
@@ -46,7 +46,7 @@
         init: function () {
             var self = this;
 
-            switch(self.options.type){
+            switch (self.options.type) {
                 case "org":
                     msalConfig = msalConfigOrg;
                     break;
@@ -72,13 +72,13 @@
 
                 // if the user is already logged in you can acquire a token
                 if (W.msalInstance.getAccount()) {
-                    
+
                     var tokenRequest = {
                         scopes: ["openid", "https://isvcanvas.onmicrosoft.com/isvcanvasapisocial/Survey.Save"] // optional Array<string>
                         //scopes: ["https://isvcanvas.onmicrosoft.com/isvcanvasapi/Read", "https://isvcanvas.onmicrosoft.com/isvcanvasapi/Save"], // optional Array<string>
                     };
 
-                    
+
 
                     return W.msalInstance
                         .acquireTokenSilent(tokenRequest)
@@ -95,7 +95,7 @@
                                     .then((response) => {
                                         // get access token from response
                                         // response.accessToken
-        
+
                                         return "Bearer " + response.accessToken;
                                     })
                                     .catch((err) => {
@@ -118,7 +118,7 @@
             }
             self.login();
 
-            
+
 
         },
 
@@ -167,6 +167,6 @@
         });
     };
 
-    
+
 
 })(jQuery, window, document);
