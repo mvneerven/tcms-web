@@ -3,7 +3,7 @@
 */
 ;
 (function ($, W, D, undefined) {
-    'use strict';
+    'use strict'; 
 
     var pluginName = "survey",
         defaults = {
@@ -11,7 +11,7 @@
             getData: $.noop,
             questions: undefined,
             answers: {},
-            mode: "normal", // normal, single, viewresults
+            mode: "normal", // normal, single, viewresults 
             firstQuestionDisplayed: -1,
             lastQuestionDisplayed: -1,
             src: null,
