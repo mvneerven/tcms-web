@@ -435,7 +435,19 @@
     function takeSurvey() {
         var sv = $("#survey");
         var version = sv.attr("data-version") || "";
+
+        $("body").dialog({
+            title: "Survey",
+            message: '<p>Please take your time to fill out the survey to the best of your knowledge.</p>' + 
+                '<p>Most questions can be skipped. If you don\'t know the answer, don\'t worry and skip it.</p>',
+            dismissVisible: false,
+            confirm: "Start survey!"
+        });
+
         $.getJSON(src + "survey/" + version, function (obj) {
+
+            $("h1").removeClass("mt-5").animate({fontSize: "12pt", marginTop: "1rem"});
+
             W.survey = obj;
             sv.html("").survey({
                 mode: W.surveyMode,
@@ -487,17 +499,11 @@
                 $(".survey-progress").text(percent + "%");
             }).on("ssr.group", function(e, grp){
                 if(W.surveyMode == "single"){
-                    console.log(grp);
-
                     var q = $(".question:visible");
                     if(q.find("h2").length == 0){
                         q.prepend('<h2>' + grp.name  + '</h2>');
                     }
                 }
-            }).on("ssr.started", function(e, on){
-
-                $("h1").removeClass("mt-5").animate({fontSize: "12pt", marginTop: "1rem"});
-
             });
         }).fail(function (j, status, error) { $("#survey").html("Sorry..." + status + " " + error) });
     }

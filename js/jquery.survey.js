@@ -159,18 +159,9 @@
                 .find("input").addClass("disabled").attr("disabled", "disabled");
             }
             else{
-
-                $("body").dialog({
-                    title: "Survey",
-                    message: '<p>Please take your time to fill out the form to the best of your knowledge.</p><p>Most questions can be skipped. If you don\'t know the answer, don\'t worry and skip it.</p>',
-                    dismissVisible: false,
-                    confirm: "Start survey!"
-                }).one({
-                    hide: function () {
-                        self.$element.trigger("ssr.started", [ true ]);            
-                    }
-                });
+                self.$element.trigger("ssr.start", [ true ]);
             }
+
         },
 
         addButtons: function () {
@@ -248,15 +239,10 @@
             var questionAnswerElement = $('<div class="answer"></div>');
             var questionCommentElement = $('<div class="comment"></div>');
             questionElement.appendTo($('.survey-container'));
-
-
-
             questionElement.append(questionTextElement);
             questionElement.append(questionCommentElement);
             questionElement.append(questionAnswerElement);
-
             questionTextElement.html(question.text.replace(/\s/g, " "));
-
             questionCommentElement.html(question.comment);
             if (question.type === 'single-select') {
                 questionElement.addClass('single-select');
