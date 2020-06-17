@@ -48,6 +48,8 @@
         init: function () {
             var self = this;
 
+            $("body").addClass("survey-shown");
+
             if(self.options.mode != "viewresults"){ 
                 W.addEventListener('beforeunload', (event) => {
                     if (!self.completed)

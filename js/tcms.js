@@ -12,7 +12,7 @@
     if (window.JSON && !window.JSON.dateParser) {
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
         var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
-       
+
         JSON.dateParser = function (key, value) {
             if (typeof value === 'string') {
                 var a = reISO.exec(value);
@@ -26,10 +26,10 @@
             }
             return value;
         };
-    
+
     }
 
-    
+
 
     var dict = [];
     var src;
@@ -91,10 +91,10 @@
     $("[data-login], #signin").click(function (e) {
         var elm = $(this);
         elm.auth({ action: "login", type: $(this).attr("data-login") }).on("ssr.loggedin", function (e, account) {
-            $("body").addClass("signed-in");
+            $('<span class="user-signedin">' + account.email + '</span>').insertAfter($("body").addClass("signed-in").find("h1:first"));
+
             W.account = account;
 
-            console.log(W.account);
             W.getApiToken().then(function (token) {
                 W.account.token = token;
             });
@@ -174,9 +174,9 @@
             }
 
             for (var qId in qList) {
-                 dictA = {
-                     id: qId,
-                     answers: []
+                dictA = {
+                    id: qId,
+                    answers: []
                 }
 
                 gIx++;
@@ -187,7 +187,7 @@
                     options[aId] = qObj.answers[aId].text;
                     dictA.answers.push(aId);
                 }
-                
+
                 var q = {
                     name: qId,
                     text: qObj.text,
@@ -212,6 +212,8 @@
     };
 
     function rest(url, obj) {
+        runProgress();
+
         var options = {
             type: obj ? "POST" : "GET",
             url: src + url,
@@ -231,7 +233,9 @@
             options.data = JSON.stringify(obj);
         }
 
-        return $.ajax(options);
+        return $.ajax(options).done(function(){
+            resetProgress()
+        });
     }
 
     function gotoPermaLink(id) {
@@ -245,6 +249,10 @@
     }
 
     function showResults(assessment) {
+
+        setProgress(100);
+        setTimeout(resetProgress, 500);
+
         W.assessment = assessment;
         var res = assessment.surveyScore;
 
@@ -255,7 +263,7 @@
 
         $(".survey-conclusion").remove();
         $(".survey-toolbar").hide();
-        
+
         var results = $('<div class="survey-conclusion"></div>');
 
         results.insertAfter("#survey");
@@ -263,10 +271,10 @@
         var conclusion = $('<div class="row"></div>').insertBefore(vis);
         var info = $('<div class="col-12 scan-info"></div>').appendTo(conclusion);
         var color = getColor(res.overallScore);
-    
-        
+
+
         $('<p class="tcms-issuer"><em> ' + res.issuer.company + ' (' + res.issuer.stage + ')<em><br/>').appendTo(info);
-        $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress + ')<em> at ' + JSON.dateParser("date", assessment.surveyDateTimeTaken) +'</p>').appendTo(info);
+        $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress + ')<em> at ' + JSON.dateParser("date", assessment.surveyDateTimeTaken) + '</p>').appendTo(info);
 
         if (showScores()) {
             var overallResultsTable = $(tpl.replace('col-xl-6 col-12', 'col-sm-12 offset-sm-0 col-lg-6 offset-lg-3')).appendTo(vis);
@@ -387,10 +395,25 @@
         }
 
         //TODO: load survey in read-only mode with answers
-        var sv = $("#survey"); 
+        var sv = $("#survey");
 
 
         if (showQuestions()) {
+
+
+            rest("survey/" + assessment.surveyVersion).then(function (obj) {
+                setProgress(100);
+                W.survey = obj;
+                sv.survey({
+                    questions: convertToSurvey(obj),
+                    answers: assessment.surveyAnswers,
+                    mode: "viewresults"
+                });
+                resetProgress();
+
+            }).fail(handleError);
+
+            /*
             $.getJSON(src + "survey/" + assessment.surveyVersion, function (obj) {
                 W.survey = obj;
                 sv.survey({
@@ -399,6 +422,7 @@
                     mode: "viewresults"
                 });
             });
+            */
         }
 
     }
@@ -413,42 +437,90 @@
     }
 
 
-    function handleError(errMsg) {
-        console.log(errMsg);
+    function handleError(j, status, error) {
+        console.log(j, status, error);
+                
         $('#nextBtn').removeAttr("disabled").removeClass("disabled");
-    }
 
-    function getCompanyFromAccount(){
-        if(W.account.type == "org"){
-            var s =  W.account.email.split("@")[1];
-            return s.substr(0,1).toUpperCase() + s.substr(1);
+        if($("#survey").text() == "Loading...") {
+            $("#survey").html('Sorry, there is a problem with the survey. Please <a href="">try again</a>.');
         }
         
+        resetProgress();
+
+        $("body").dialog("hide");
+        
+        clearInterval(W.progressTimer);
     }
 
-    function getWebsiteFromAccount(){
-        if(W.account.type == "org")
+    function getCompanyFromAccount() {
+        if (W.account.type == "org") {
+            var s = W.account.email.split("@")[1];
+            return s.substr(0, 1).toUpperCase() + s.substr(1);
+        }
+
+    }
+
+    function getWebsiteFromAccount() {
+        if (W.account.type == "org")
             return "https://" + W.account.email.split('@')[1];
     }
+
+    function setProgress(percent) {
+        var elm = $("#progress");
+        if(!percent || percent === 0){
+
+            elm.animate({opacity: 0}, 500, function(){
+                elm.stop(true, true).css({ width: percent + "%", opacity: 1 });
+            });
+        }
+        else{
+            elm.animate({ width: percent + "%" }, 200);
+        }
+    }
+
+    function showProgress() {
+        console.log(new Date().toLocaleTimeString());
+        W.progressValue++;
+        setProgress(W.progressValue);
+        if(W.progressValue === 100){
+            resetProgress()
+        }
     
+    }
+
+    
+    function resetProgress(){
+        clearInterval(W.progressTimer);
+        delete W.progressTimer;
+        setProgress(0);
+    
+    }
+
+    function runProgress() {
+        //resetProgress();
+        W.progressValue = 0;
+        W.progressTimer = setInterval(showProgress, 100);
+    }
+
 
     function takeSurvey() {
         var sv = $("#survey");
-        var version = sv.attr("data-version") || "";
-
-        $('<div id="progress"></div>').insertAfter($("nav"));
+        var version = sv.attr("data-version") || "";        
 
         $("body").dialog({
             title: "Survey",
-            message: '<p>Please take your time to fill out the survey to the best of your knowledge.</p>' + 
+            message: '<p>Please take your time to fill out the survey to the best of your knowledge.</p>' +
                 '<p>Most questions can be skipped. If you don\'t know the answer, don\'t worry and skip it.</p>',
             dismissVisible: false,
             confirm: "Start survey!"
         });
 
-        $.getJSON(src + "survey/" + version, function (obj) {
+        
+        rest("survey/" + version).then(function (obj) {
+            resetProgress();
 
-            $("h1").removeClass("mt-5").animate({fontSize: "12pt", marginTop: "1rem"});
+            
 
             W.survey = obj;
             sv.html("").survey({
@@ -461,6 +533,8 @@
                     website: getWebsiteFromAccount()
                 },
                 finish: function (survey) {
+
+                    setProgress(100);
 
                     $('#nextBtn').attr("disabled", "disabled").addClass("disabled");
 
@@ -491,26 +565,25 @@
                         version: version,
                         results: results
                     };
+                    
+                    
 
                     rest("surveyresults", obj).then(function (obj) {
                         gotoPermaLink(obj.id);
-
                     }).fail(handleError);
                 }
             }).on("ssr.progress", function (e, percent) {
-                var elm = $("#progress");
-                
-                elm.animate({width: percent + "%"});
-
-            }).on("ssr.group", function(e, grp){
-                if(W.surveyMode == "single"){
+                setProgress(percent);
+            }).on("ssr.group", function (e, grp) {
+                if (W.surveyMode == "single") {
                     var q = $(".question:visible");
-                    if(q.find("h2").length == 0){
-                        q.prepend('<h2>' + grp.name  + '</h2>');
+                    if (q.find("h2").length == 0) {
+                        q.prepend('<h2>' + grp.name + '</h2>');
                     }
                 }
             });
-        }).fail(function (j, status, error) { $("#survey").html("Sorry..." + status + " " + error) });
+        }).fail(handleError);
+        
     }
 
 })(jQuery, window, document);

@@ -129,8 +129,21 @@
                 .loginPopup(loginRequest)
                 .then((response) => {
                     var acc = response.account;
+                    var type = "per";
+                    var idp = acc.idToken.idp.replace("https://","");
+                    
+                    idp = idp.split('/')[0];
+                    switch(idp){
+                        case "login.microsoftonline.com":
+                            type = "org";
+                            break;
+                        default:
+                            type = "per";
+                            break;
+                    }
+
                     self.$element.trigger("ssr.loggedin", {
-                        type: self.options.type,
+                        type: type,
                         name: acc.idToken.name,
                         email: acc.idToken.emails ? acc.idToken.emails[0] : acc.idToken.email
                     });

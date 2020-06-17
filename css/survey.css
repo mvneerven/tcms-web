@@ -229,24 +229,6 @@ th.swot-h {
   font-weight: bolder;
 }
 
-/*
-.swot td.swot-s > div {
-  background-color:#A0C9CA;
-}
-
-.swot td.swot-w > div{
-  background-color:#E6D596;
-}
-
-.swot td.swot-o > div{
-  background-color:#CADB96;
-}
-
-.swot td.swot-t > div{
-  background-color: #E7A1A6;
-}
-*/
-
 .swot td.swot-q { 
   font-size: 12px;
   width: 50%;

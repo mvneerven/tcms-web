@@ -217,3 +217,26 @@ footer{
   #survey .comment{
     color: #FF6A00;
   }
+
+  body.survey-shown #survey-canvas h1{
+    font-size: 12pt;
+    margin-top: 1rem;
+    
+    /*
+    -webkit-transition:all .2s;
+    -moz-transition:all .2s;
+    -o-transition:all .2s;
+    transition:all .2s
+    */
+  }
+
+  span.user-signedin {
+    float: right;
+    font-size: 12px;
+    margin-top: -24px;
+    margin-left: 10px;
+    padding: 2px 7px;
+    background-color: #FFDCC3;
+  }
+
+  
