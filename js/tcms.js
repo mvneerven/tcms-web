@@ -239,7 +239,8 @@
     }
 
     function gotoPermaLink(id) {
-        W.location.hash = "#/" + id;
+        //W.location.hash = "#/" + id;
+        W.location.replace("/survey.html?view#/" + id);
     }
 
     // summary/view/details/questions
