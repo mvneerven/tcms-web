@@ -14,6 +14,7 @@
 }
 .survey-container .answer{
     border-left: 5px solid transparent;
+    width: 100%;
 }
 
 .survey-container .question label span{
@@ -62,7 +63,7 @@
     border-color:rgba(244,144,154,0.4);
 }
 
-.survey-container:not(.taken) .question label span:not(.active):hover {
+.survey-container:not(.taken) .question label:hover span:not(.active) {
     background-color: rgba(219,221,224, 0.5);
     border-color:rgba(244,144,154,0.2);
 }
@@ -279,20 +280,6 @@ li.ti-flag:before, li.ti-check-box:before {
 
 div.tcms-result.overall {
   margin-bottom: 3em;;
-}
-
-.navbar-dark.bg-dark {
-  background-color: #555!important;
-}
-
-.navbar-brand {
-  display: inline-block;
-  width: 250px;
-  height: 40px;
-  background-image: url("../img/isv-canvas-logo-03.svg")!important;
-  background-repeat: no-repeat ;
-  background-size: contain;
-  padding-left: 220px;
 }
 
 #survey-canvas th.swot-a {

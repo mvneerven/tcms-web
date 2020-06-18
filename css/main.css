@@ -17,6 +17,21 @@ footer{
     color: #eee;    
 }
 
+.navbar-dark.bg-dark {
+  background-color: #555!important;
+}
+
+.navbar-brand {
+  display: inline-block;
+  width: 250px;
+  height: 40px;
+  -background-image: url("../img/isv-canvas-logo-03.svg")!important;
+  background-image: url("../img/isv-canvas-logo-04.png")!important;
+  background-repeat: no-repeat ;
+  background-size: contain;
+  padding-left: 220px;
+}
+
   
   .wrapper {
     height: 100%;
@@ -111,11 +126,11 @@ footer{
       color: #000;
   }
   
-  #survey-canvas  .survey-container:not(.taken) .question label span:not(.active):hover{
+  #survey-canvas  .survey-container:not(.taken) .question label:hover span:not(.active){
     border-color: #FF8B38;
   }
 
-  #survey-canvas  .survey-container:not(.taken) .question label span.active:hover{
+  #survey-canvas  .survey-container:not(.taken) .question label:hover span.active{
     background-color: #FF8B38;
     -webkit-transition:background .2s;
     -moz-transition:background .2s;
