@@ -288,10 +288,10 @@ footer{
   span.user-signedin {
     float: right;
     font-size: 12px;
-    margin-top: -12px;
+    margin-top: -15px;
     margin-left: 10px;
     padding: 2px 7px;
-    background-color: #FFDCC3;
+    background-color: #ddd;
   }
 
 

@@ -392,9 +392,11 @@
         var sv = $("#survey");
 
         if (showQuestions()) {
+            console.log("takesurvey2");
             rest("survey/" + assessment.surveyVersion).then(function (obj) {
                 setProgress(100);
                 W.survey = obj;
+                sv.html("");
                 sv.survey({
                     questions: convertToSurvey(obj),
                     answers: assessment.surveyAnswers,
@@ -500,7 +502,7 @@
             confirm: "Start survey!"
         });
 
-        
+        console.log("takesurvey1");
         rest("survey/" + version).then(function (obj) {
             resetProgress();
             W.survey = obj;

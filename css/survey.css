@@ -361,7 +361,8 @@ body.view-summary #survey-canvas table.swot .swot-qc, body.view-summary #survey-
 }
 
 .tcms-issuer em{
-  font-size: 2em;
+  font-size: 1.2em;
+  font-weight: 600;
 }
 
 span.app-version {  
