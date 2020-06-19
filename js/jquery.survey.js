@@ -169,7 +169,7 @@
 
         addButtons: function () {
             var self = this;
-            self.toolbar = $('<div class="survey-toolbar"><div class="btn-group"><a id="backBtn" href="#" class="button btn btn-default">« Back</a><a id="nextBtn" href="#" class="button btn btn-primary">Continue »</a></div><span class="survey-progress"></span></div>');
+            self.toolbar = $('<div class="survey-toolbar"><div class="btn-group"><a id="backBtn" href="#" class="button btn btn-default">« Back</a><a id="nextBtn" href="#" class="button btn btn-primary">Continue »</a></div></div>');
             var tb = self.$element.attr("data-toolbar");
             if (self.toolbar) {
                 self.toolbar.appendTo($(tb));

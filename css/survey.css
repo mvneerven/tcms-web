@@ -333,12 +333,6 @@ td.swot-q > div > h4{
   display: none;
 }
 
-.survey-progress {
-  display: inline-block;
-  padding: 5px 20px;
-  background-color: transparent;
-  color: #666;
-}
 
 span.ti-fill {
   display: inline-block;
@@ -366,10 +360,20 @@ body.view-summary #survey-canvas table.swot .swot-qc, body.view-summary #survey-
   display: none;
 }
 
-body[class^="view-"] nav, body[class^="view-"] footer, body[class^="view-"] h1, body[class^="view-"] .survey-start {
-  display: none;
-}
-
 .tcms-issuer em{
   font-size: 2em;
+}
+
+span.app-version {  
+  display: none;
+  background-color: #666;
+  margin-top: 0;
+  font-size: 10px;
+  padding: 2px 5px;
+  color: white;
+}
+
+body.survey-shown span.app-version{
+  display: inline-block;
+  
 }

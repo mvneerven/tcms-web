@@ -5,9 +5,14 @@
 (function ($, W, D, undefined) {
     'use strict';
 
-    // set mode
-    W.surveyMode = "single";
-
+    const survey = {
+        appStage: "Beta",
+        appVersion: 0.91,
+        mode: "single",
+        debug: D.location.hostname == "localhost",
+        api: undefined
+    };
+    survey.api = survey.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/"; 
 
     if (window.JSON && !window.JSON.dateParser) {
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
@@ -26,21 +31,11 @@
             }
             return value;
         };
-
     }
 
-
-
-    var dict = [];
-    var src;
-    var debug = D.location.hostname == "localhost";
-    if (debug)
-        src = "https://localhost:44367/";
-    else
-        src = "https://tcmsapi.azurewebsites.net/"
-
+    var dict = [];   
+    
     $(W).on('hashchange load', function (e) {
-
         var h = W.location.hash.substr(1);
         if (h.startsWith("info:")) {
             var p = decodeURI(h.substr(5)).replace('//', '/').split('/');
@@ -216,7 +211,7 @@
 
         var options = {
             type: obj ? "POST" : "GET",
-            url: src + url,
+            url: survey.api + url,
 
             contentType: "application/json",
 
@@ -239,8 +234,7 @@
     }
 
     function gotoPermaLink(id) {
-        //W.location.hash = "#/" + id;
-        W.location.replace("/survey.html?view#/" + id);
+        W.location.replace("/survey.html#/" + id);
     }
 
     // summary/view/details/questions
@@ -250,7 +244,6 @@
     }
 
     function showResults(assessment) {
-
         setProgress(100);
         setTimeout(resetProgress, 500);
 
@@ -398,10 +391,7 @@
         //TODO: load survey in read-only mode with answers
         var sv = $("#survey");
 
-
         if (showQuestions()) {
-
-
             rest("survey/" + assessment.surveyVersion).then(function (obj) {
                 setProgress(100);
                 W.survey = obj;
@@ -412,20 +402,8 @@
                 });
                 resetProgress();
 
-            }).fail(handleError);
-
-            /*
-            $.getJSON(src + "survey/" + assessment.surveyVersion, function (obj) {
-                W.survey = obj;
-                sv.survey({
-                    questions: convertToSurvey(obj),
-                    answers: assessment.surveyAnswers,
-                    mode: "viewresults"
-                });
-            });
-            */
+            }).fail(handleError);            
         }
-
     }
 
     // summary/view/details/questions
@@ -436,7 +414,6 @@
     function showScores() {
         return !$("body").hasClass("view-questions");
     }
-
 
     function handleError(j, status, error) {
         console.log(j, status, error);
@@ -499,7 +476,6 @@
     }
 
     function runProgress() {
-        //resetProgress();
         W.progressValue = 0;
         W.progressTimer = setInterval(showProgress, 100);
     }
@@ -507,7 +483,14 @@
 
     function takeSurvey() {
         var sv = $("#survey");
-        var version = sv.attr("data-version") || "";        
+        var version = sv.attr("data-version") || "";
+
+        $('<span class="app-version">App: '  
+            + survey.appStage 
+            + ' ' + survey.appVersion 
+            + ', Data: ' + version 
+            + '</span>').insertAfter($("h1:first"));
+
 
         $("body").dialog({
             title: "Survey",
@@ -520,12 +503,9 @@
         
         rest("survey/" + version).then(function (obj) {
             resetProgress();
-
-            
-
             W.survey = obj;
             sv.html("").survey({
-                mode: W.surveyMode,
+                mode: survey.mode,
                 questions: convertToSurvey(obj),
                 answers: {
                     fullname: W.account.name,
@@ -566,8 +546,6 @@
                         version: version,
                         results: results
                     };
-                    
-                    
 
                     rest("surveyresults", obj).then(function (obj) {
                         gotoPermaLink(obj.id);
@@ -576,15 +554,14 @@
             }).on("ssr.progress", function (e, percent) {
                 setProgress(percent);
             }).on("ssr.group", function (e, grp) {
-                if (W.surveyMode == "single") {
+                if (survey.mode == "single") {
                     var q = $(".question:visible");
                     if (q.find("h2").length == 0) {
                         q.prepend('<h2>' + grp.name + '</h2>');
                     }
                 }
             });
-        }).fail(handleError);
-        
+        }).fail(handleError);        
     }
 
 })(jQuery, window, document);
