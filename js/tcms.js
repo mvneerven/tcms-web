@@ -7,12 +7,18 @@
 
     const survey = {
         appStage: "Beta",
+        serverless: true,
         appVersion: 0.91,
         mode: "single",
         debug: D.location.hostname == "localhost",
         api: undefined
     };
-    survey.api = survey.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/"; 
+    
+    if(survey.serverless)
+        survey.api = survey.debug ? "http://localhost:7071/" : "https://tcmsazfunctions.azurewebsites.net/";
+    else
+        survey.api = survey.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/"; 
+
 
     if (window.JSON && !window.JSON.dateParser) {
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
@@ -392,7 +398,7 @@
         var sv = $("#survey");
 
         if (showQuestions()) {
-            console.log("takesurvey2");
+            
             rest("survey/" + assessment.surveyVersion).then(function (obj) {
                 setProgress(100);
                 W.survey = obj;
@@ -418,6 +424,9 @@
     }
 
     function handleError(j, status, error) {
+
+        debugger;
+
         console.log(j, status, error);
                 
         $('#nextBtn').removeAttr("disabled").removeClass("disabled");
@@ -502,7 +511,7 @@
             confirm: "Start survey!"
         });
 
-        console.log("takesurvey1");
+        
         rest("survey/" + version).then(function (obj) {
             resetProgress();
             W.survey = obj;
