@@ -6,18 +6,29 @@
     'use strict';
 
     const survey = {
-        appStage: "Beta",
+        appStage: $("meta[name=app-stage]").attr("value") || "beta",
         serverless: true,
-        appVersion: 0.91,
+        appVersion: $("meta[name=app-version]").attr("value") || "0.9",
+        surveyVersion: $("meta[name=survey-version]").attr("value"),
         mode: "single",
         debug: D.location.hostname == "localhost",
         api: undefined
+    };
+
+    W.account = {
+        email: "anonymous"
     };
     
     if(survey.serverless)
         survey.api = survey.debug ? "http://localhost:7071/" : "https://tcmsazfunctions.azurewebsites.net/";
     else
         survey.api = survey.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/"; 
+
+    $('<span class="version">Version: '  
+        + survey.appStage 
+        + ' ' + survey.appVersion 
+        + ' - survey: ' + survey.surveyVersion 
+        + '</span>').insertAfter($("h1:first"));
 
 
     if (window.JSON && !window.JSON.dateParser) {
@@ -70,8 +81,6 @@
                     setView(W.location.search);
 
                 showResults(obj);
-            }).fail(function (errMsg) {
-                debugger;
             });
         }
     });
@@ -92,7 +101,7 @@
     $("[data-login], #signin").click(function (e) {
         var elm = $(this);
         elm.auth({ action: "login", type: $(this).attr("data-login") }).on("ssr.loggedin", function (e, account) {
-            $('<span class="user-signedin">' + account.email + '</span>').insertAfter($("body").addClass("signed-in").find("h1:first"));
+            $('<span class="user-signedin">' + (account.email || "anonymous" ) + '</span>').insertAfter($("body").addClass("signed-in").find("h1:first"));
 
             W.account = account;
 
@@ -424,15 +433,21 @@
     }
 
     function handleError(j, status, error) {
-
-        debugger;
-
         console.log(j, status, error);
                 
         $('#nextBtn').removeAttr("disabled").removeClass("disabled");
 
         if($("#survey").text() == "Loading...") {
             $("#survey").html('Sorry, there is a problem with the survey. Please <a href="">try again</a>.');
+        }
+        else{
+            $("body").dialog({
+                title: "Survey",
+                message: '<p>We are sorry but there was a problem with the survey.</p>',
+                dismissVisible: true,
+                confirmVisible: false,
+                dismiss: "Close"
+            });
         }
         
         resetProgress();
@@ -494,14 +509,7 @@
 
     function takeSurvey() {
         var sv = $("#survey");
-        var version = sv.attr("data-version") || "";
-
-        $('<span class="app-version">App: '  
-            + survey.appStage 
-            + ' ' + survey.appVersion 
-            + ', Data: ' + version 
-            + '</span>').insertAfter($("h1:first"));
-
+        
 
         $("body").dialog({
             title: "Survey",
@@ -512,7 +520,7 @@
         });
 
         
-        rest("survey/" + version).then(function (obj) {
+        rest("survey/" + survey.surveyVersion).then(function (obj) {
             resetProgress();
             W.survey = obj;
             sv.html("").survey({
@@ -554,7 +562,7 @@
                     }
 
                     var obj = {
-                        version: version,
+                        version: survey.surveyVersion,
                         results: results
                     };
 

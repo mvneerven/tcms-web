@@ -365,16 +365,20 @@ body.view-summary #survey-canvas table.swot .swot-qc, body.view-summary #survey-
   font-weight: 600;
 }
 
-span.app-version {  
-  display: none;
+span.version {  
   background-color: #666;
-  margin-top: 0;
+  margin: -10px 0 10px;
+  width: max-content;
+  display: block;
   font-size: 10px;
-  padding: 2px 5px;
+  padding: 3px 7px;
   color: white;
+  border-radius: 3px;
 }
 
-body.survey-shown span.app-version{
-  display: inline-block;
-  
+body.survey-shown span.version{
+  margin: 0px 0 10px;
+  color: #444;
+  padding: 1px;
+  background-color: transparent;
 }
