@@ -7,7 +7,7 @@
 
     const survey = {
         appStage: "Beta",
-        serverless: false,
+        serverless: true,
         appVersion: 0.91,
         mode: "single",
         debug: D.location.hostname == "localhost",
