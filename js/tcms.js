@@ -18,6 +18,7 @@
     W.account = {
         email: "anonymous"
     };
+
     
     if(survey.serverless)
         survey.api = survey.debug ? "http://localhost:7071/" : "https://tcmsazfunctions.azurewebsites.net/";
@@ -85,32 +86,41 @@
         }
     });
 
-    $("#signout").click(function () {
+    $("[data-action='signout']").click(function () {
         $(this).auth({ action: "signout" });
         e.returnValue = false;
         return false;
     });
 
     $("#tech-knowledge").on("change", function () {
-        $("#login").toggleClass("disabled");
-        var isDisabled = $("#login").is(".disabled");
-        $("#login")[isDisabled ? "attr" : "removeAttr"]("disabled", "disabled");
+        $("[data-action='login']").toggleClass("disabled");
+        var isDisabled = $("button[data-action='login']").is(".disabled");
+        $("[data-action='login']")[isDisabled ? "attr" : "removeAttr"]("disabled", "disabled");
     });
 
 
-    $("[data-login], #signin").click(function (e) {
+    $("[data-action='login']").click(function (e) {
         var elm = $(this);
-        elm.auth({ action: "login", type: $(this).attr("data-login") }).on("ssr.loggedin", function (e, account) {
-            $('<span class="user-signedin">' + (account.email || "anonymous" ) + '</span>').insertAfter($("body").addClass("signed-in").find("h1:first"));
-
+        elm.auth({ action: "login", type: "per" }).on("ssr.loggedin", function (e, account) {
             W.account = account;
+
+            $("body").addClass("signed-in");
+
+            $('<img src="https://eu.ui-avatars.com/api/?rounded=true&format=png&name=' + W.account.name + '" />')
+                .attr("title", W.account.name + ' (' +  W.account.email + ')').appendTo($("#avatar"));
+
+            $("[data-action='signout']").removeAttr('disabled').removeClass("disabled");
 
             W.getApiToken().then(function (token) {
                 W.account.token = token;
             });
-            if (elm.attr("data-login")) {
+            
+            if (elm.attr("data-action") == 'login') {
                 $("#survey").html('Loading...');
                 takeSurvey();
+            }
+            else{
+                debugger;
             }
         });
         e.returnValue = false;
@@ -509,7 +519,6 @@
 
     function takeSurvey() {
         var sv = $("#survey");
-        
 
         $("body").dialog({
             title: "Survey",

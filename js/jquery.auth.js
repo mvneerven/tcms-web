@@ -11,18 +11,17 @@
             selector: ".login"
         };
 
-    const msalConfigOrg = {
-        auth: {
-            clientId: "f2d88ec2-9d1d-4f25-a1ce-c9e1b2d395c9"
-        }
-    };
-
-    const msalConfigPer = {
+    const msalConfig = {
         auth: {
             clientId: "f2d88ec2-9d1d-4f25-a1ce-c9e1b2d395c9",
             authority: "https://isvcanvas.b2clogin.com/isvcanvas.onmicrosoft.com/B2C_1A_signup_signinAAD",
             validateAuthority: false
+        },
+        cache: {
+            cacheLocation: "sessionStorage",
+            storeAuthStateInCookie: true
         }
+
     };
 
     var loginRequest = {
@@ -39,27 +38,10 @@
         this.init();
     }
 
-    var msalConfig;
-
     Plugin.prototype = {
 
         init: function () {
             var self = this;
-
-            switch (self.options.type) {
-                case "org":
-                    msalConfig = msalConfigOrg;
-                    break;
-                case "per":
-                    msalConfig = msalConfigPer;
-                    break;
-
-            }
-
-            msalConfig.cache = {
-                cacheLocation: "sessionStorage",
-                storeAuthStateInCookie: true
-            }
 
             W.msalInstance = new Msal.UserAgentApplication(msalConfig);
 
@@ -116,48 +98,44 @@
                     self.signOut();
                     break;
             }
-            self.login();
-
-
-
         },
 
         login: function () {
             var self = this;
 
-            W.msalInstance
-                .loginPopup(loginRequest)
-                .then((response) => {
-                    var acc = response.account;
-                    var type = "per";
-                    var idp = acc.idToken.idp.replace("https://","");
-                    
-                    idp = idp.split('/')[0];
-                    switch(idp){
-                        case "login.microsoftonline.com":
-                            type = "org";
-                            break;
-                        default:
-                            type = "per";
-                            break;
-                    }
+            W.msalInstance.loginPopup(loginRequest).then((response) => {
+                var acc = response.account;
+                var type = "per";
+                var idp = acc.idToken.idp.replace("https://", "");
 
-                    self.$element.trigger("ssr.loggedin", {
-                        type: type,
-                        name: acc.idToken.name,
-                        email: acc.idToken.emails ? acc.idToken.emails[0] : acc.idToken.email
-                    });
-                })
-                .catch((err) => {
-                    console.log(err);
-                    // handle error
+                idp = idp.split('/')[0];
+                switch (idp) {
+                    case "login.microsoftonline.com":
+                        type = "org";
+                        break;
+                    default:
+                        type = "per";
+                        break;
+                }
+
+                self.$element.trigger("ssr.loggedin", {
+                    type: type,
+                    name: acc.idToken.name,
+                    email: acc.idToken.emails ? acc.idToken.emails[0] : acc.idToken.email
                 });
+            })
+            .catch((err) => {
+                console.log(err);
+                // handle error
+            });
         },
 
         signOut: function () {
             const config = {
                 auth: {
-                    clientId: msalConfig.auth.clientId
+                    clientId: msalConfig.auth.clientId,
+                    redirectUri: W.location.href,
+                    postLogoutRedirectUri: W.location.href
                 }
             }
 
