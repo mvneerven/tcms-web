@@ -9,6 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.17.2
+        id: bumpVersion
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+          DEFAULT_BUMP: patch 
+      - name: write version
+        run: sed -i 's/\*\*APPVER\*\*/${{ steps.bumpVersion.outputs.new_tag }}/g' survey.html
+        
       - uses: bacongobbler/azure-blob-storage-upload@v1.0.0
         with:
           source_dir: ./
