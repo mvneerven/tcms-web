@@ -13,12 +13,12 @@ jobs:
           fetch-depth: '0'
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.17.2
-        id: new-version
+        id: bumpVersion
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: false
       - name: write version
-        run: sed -i 's/**APPVER**/${{steps.new-version.output.new_tag}}/g' survey.html
+        run: sed -i 's/**APPVER**/${{ steps.bumpVersion.outputs.new_tag }}/g' survey.html
         
       - uses: bacongobbler/azure-blob-storage-upload@v1.0.0
         with:
