@@ -8,7 +8,7 @@
     const survey = {
         appStage: $("meta[name=app-stage]").attr("value") || "beta",
         serverless: true,
-        appVersion: $("meta[name=app-version]").attr("value") || "0.9",
+        appVersion: $("meta[name=app-version]").attr("value").replace("**APPVER**", "") || "0.0.1",
         surveyVersion: $("meta[name=survey-version]").attr("value"),
         mode: "single",
         debug: D.location.hostname == "localhost",
@@ -502,20 +502,17 @@
         }
     
     }
-
     
     function resetProgress(){
         clearInterval(W.progressTimer);
         delete W.progressTimer;
-        setProgress(0);
-    
+        setProgress(0);    
     }
 
     function runProgress() {
         W.progressValue = 0;
         W.progressTimer = setInterval(showProgress, 100);
     }
-
 
     function takeSurvey() {
         var sv = $("#survey");
@@ -527,7 +524,6 @@
             dismissVisible: false,
             confirm: "Start survey!"
         });
-
         
         rest("survey/" + survey.surveyVersion).then(function (obj) {
             resetProgress();
@@ -542,7 +538,6 @@
                     website: getWebsiteFromAccount()
                 },
                 finish: function (survey) {
-
                     setProgress(100);
 
                     $('#nextBtn').attr("disabled", "disabled").addClass("disabled");
