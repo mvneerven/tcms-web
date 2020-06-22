@@ -17,7 +17,7 @@
     //const colors = ["#CB6731", "#888","#EABD5D", "#CB5B5A", "#AC557A", "#8D4C7D", "#6B406E", "#40324F"];
 
     const dlgTpl = '<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="confirm-label" aria-hidden="true">' +
-        '<div class="modal-dialog modal-sm">' +
+        '<div class="modal-dialog modal-lg">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
 
@@ -67,7 +67,7 @@
             $('.message', elm).html(this.options.message);
             $('.confirm', elm).html(this.options.confirm)[self.options.confirmVisible ? "show" : "hide"]();
             $('.dismiss', elm).html(this.options.dismiss)[self.options.dismissVisible ? "show" : "hide"]();
-
+            
             elm.on('click', '.confirm', function (event) {
                 elm.data('confirm', true);
             }).on("keypress", function (e) {

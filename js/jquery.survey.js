@@ -363,7 +363,9 @@
                     break;
             } while (self.options.lastQuestionDisplayed < self.questions.length - 1);
 
-            self.$element.trigger("ssr.group", [ W.survey.groups[g] ]);            
+            if(self.options.rawSurvey){
+                self.$element.trigger("ssr.group", [ self.options.rawSurvey.groups[g] ]);            
+            }
             
             self.doButtonStates();
             self.setPercentage();

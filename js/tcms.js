@@ -5,7 +5,7 @@
 (function ($, W, D, undefined) {
     'use strict';
 
-    const survey = {
+    W.surveyOptions = {
         appStage: $("meta[name=app-stage]").attr("value") || "beta",
         serverless: true,
         appVersion: $("meta[name=app-version]").attr("value").replace("**APPVER**", "") || "0.0.1",
@@ -19,16 +19,17 @@
         email: "anonymous"
     };
 
+    var mdSvc = new showdown.Converter();
     
-    if(survey.serverless)
-        survey.api = survey.debug ? "http://localhost:7071/" : "https://tcmsazfunctions.azurewebsites.net/";
+    if(W.surveyOptions.serverless)
+        W.surveyOptions.api = W.surveyOptions.debug ? "http://localhost:7071/" : "https://tcmsazfunctions.azurewebsites.net/";
     else
-        survey.api = survey.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/"; 
+        W.surveyOptions.api = W.surveyOptions.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/"; 
 
     $('<span class="version">Version: '  
-        + survey.appStage 
-        + ' ' + survey.appVersion 
-        + ' - survey: ' + survey.surveyVersion 
+        + W.surveyOptions.appStage 
+        + ' ' + W.surveyOptions.appVersion 
+        + ' - survey: ' + W.surveyOptions.surveyVersion 
         + '</span>').insertAfter($("h1:first"));
 
 
@@ -54,25 +55,42 @@
     var dict = [];   
     
     $(W).on('hashchange load', function (e) {
+
         var h = W.location.hash.substr(1);
         if (h.startsWith("info:")) {
             var p = decodeURI(h.substr(5)).replace('//', '/').split('/');
-            var msg = p[1] == "true" ? "Not having" : "Having";
-            msg += " " + p[4];
-            msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0];
-            msg += " in the " + W.assessment.surveyScore.issuer.stage + " stage";
+            
+            $.get("https://raw.githubusercontent.com/wiki/mvneerven/isvcanvas-help/" + p[3] +".md").then(function(md){
+                var html = mdSvc.makeHtml(md);
+                var link = "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3] + "/_edit";
+                html += '<p class="swot-more-info"><a target="_blank" href="' + link + '"><span class="ti-pencil-alt"></span> Edit Wiki topic</a></p>'
 
-            var link = "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3];
+                $("#survey").dialog({
+                    title: p[2],
+                    message: html,
+                    dismissVisible: false
+                }).on("hide", function () {
+                    console.log("hide");
+                    W.location.hash = "";
+                });    
+           }).fail(function(){
+                var msg = p[1] == "true" ? "Not having" : "Having";
+                msg += " " + p[4];
+                msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0];
+                msg += " in the " + W.assessment.surveyScore.issuer.stage + " stage";
+                var link = "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3] ;
+                msg += '<p class="swot-more-info"><a target="_blank" href="' + link + '"><span class="ti-pencil-alt"></span> Create Wiki topic</a></p>'
 
-            msg += '<p class="swot-more-info"><a target="_blank" href="' + link + '"><span class="ti-info ti-fill"></span> More information</a></p>'
-
-            $("#survey").dialog({
-                title: p[2],
-                message: msg
-            }).on("hide", function () {
-                console.log("hide");
-                W.location.hash = "";
-            });
+                $("#survey").dialog({
+                    title: p[2],
+                    message: msg,
+                    dismissVisible: false
+                }).on("hide", function () {
+                    console.log("hide");
+                    W.location.hash = "";
+                });    
+           });
+     
         }
         else if (h.startsWith("/")) {
             var id = h.substr(1);
@@ -236,7 +254,7 @@
 
         var options = {
             type: obj ? "POST" : "GET",
-            url: survey.api + url,
+            url: W.surveyOptions.api + url,
 
             contentType: "application/json",
 
@@ -271,8 +289,9 @@
     function showResults(assessment) {
         setProgress(100);
         setTimeout(resetProgress, 500);
-
+        
         W.assessment = assessment;
+        
         var res = assessment.surveyScore;
 
         var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h h2" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr></tbody>' +
@@ -418,9 +437,10 @@
 
         if (showQuestions()) {
             
+
             rest("survey/" + assessment.surveyVersion).then(function (obj) {
                 setProgress(100);
-                W.survey = obj;
+                //W.surveyOptions = obj;
                 sv.html("");
                 sv.survey({
                     questions: convertToSurvey(obj),
@@ -451,6 +471,7 @@
             $("#survey").html('Sorry, there is a problem with the survey. Please <a href="">try again</a>.');
         }
         else{
+            /*
             $("body").dialog({
                 title: "Survey",
                 message: '<p>We are sorry but there was a problem with the survey.</p>',
@@ -458,6 +479,8 @@
                 confirmVisible: false,
                 dismiss: "Close"
             });
+            */
+
         }
         
         resetProgress();
@@ -520,16 +543,17 @@
         $("body").dialog({
             title: "Survey",
             message: '<p>Please take your time to fill out the survey to the best of your knowledge.</p>' +
-                '<p>Most questions can be skipped. If you don\'t know the answer, don\'t worry and skip it.</p>',
+                '<p>Most questions can be skipped. If you don\'t know the answer to a question, don\'t worry and skip it.</p>',
             dismissVisible: false,
             confirm: "Start survey!"
         });
         
-        rest("survey/" + survey.surveyVersion).then(function (obj) {
+        rest("survey/" + W.surveyOptions.surveyVersion).then(function (obj) {
             resetProgress();
-            W.survey = obj;
+            var survey = obj;
             sv.html("").survey({
-                mode: survey.mode,
+                rawSurvey: survey,
+                mode: W.surveyOptions.mode,
                 questions: convertToSurvey(obj),
                 answers: {
                     fullname: W.account.name,
@@ -564,9 +588,9 @@
                         }
                         results[dict[i].id] = result;
                     }
-
+                    
                     var obj = {
-                        version: survey.surveyVersion,
+                        version: W.surveyOptions.surveyVersion,
                         results: results
                     };
 
@@ -577,10 +601,12 @@
             }).on("ssr.progress", function (e, percent) {
                 setProgress(percent);
             }).on("ssr.group", function (e, grp) {
-                if (survey.mode == "single") {
-                    var q = $(".question:visible");
-                    if (q.find("h2").length == 0) {
-                        q.prepend('<h2>' + grp.name + '</h2>');
+                if(grp && grp.name){
+                    if (W.surveyOptions.mode == "single") {
+                        var q = $(".question:visible");
+                        if (q.find("h2").length == 0) {
+                            q.prepend('<h2>' + grp.name + '</h2>');
+                        }
                     }
                 }
             });
