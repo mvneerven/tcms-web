@@ -8,15 +8,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <meta name="description"
-        content="ISV Canvas Tech Maturity Survey (BETA) - an ISV technical assessment - by Neerventure &amp; Microsoft">
+        content="ISV Canvas Tech Maturity Survey - About">
     <meta name="author" content="Marc van Neerven">
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://isvcanvas.com" />
-    <meta property="og:title" content="ISV Canvas - Terms &amp; Conditions" />
+    <meta property="og:title" content="ISV Canvas - About" />
     <meta property="og:image" content="https://isvcanvas.com/img/og-image.png" />
     <meta property="og:site_name" content="ISVCanvas.com" />
-    <meta property="og:description" content="ISV Canvas - Terms &amp; Conditions" />
+    <meta property="og:description" content="ISV Canvas - About" />
 
     <!-- Bootstrap core CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&display=swap" rel="stylesheet">
@@ -117,14 +117,17 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h2>Technology</h2>
-                    <p>
-                        The ISV Canvas survey runs off <strong>static HTML</strong> served directly from <strong>Cloud
-                            Storage</strong>, with JavaScript and a <strong>Serverless Functions REST API</strong>.
-                    </p>
-
-                    <p>
-                        It uses <strong>Azure AD B2C</strong> IDaaS (Identity as a Service) as its identity service.
-                    </p>
+                    <ul>
+                        <li>Single Page Application (SPA) design</li>
+                        <li>100% static HTML served directly from Cloud Storage</li>
+                        <li>CloudFlare caching &amp; SSL</li>
+                        <li>Azure AD B2C IDaaS (Identity as a Service)</li>
+                        <li>Serverless Functions REST API (JWT)</li>
+                        <li>Github Wiki integrated</li>
+                        <li>Github Actions CI/CD</li>
+                        <li>CosmosDB database</li>
+                        <li>No application-level hosting, only true PaaS &amp; FaaS (Functions as a Service) used</li>
+                    </ul>
                 </div>
             </div>
 
