@@ -5,6 +5,8 @@
 (function ($, W, D, undefined) {
     'use strict';
 
+    W.bodyClasses = $("body").attr("class");
+
     W.surveyOptions = {
         appStage: $("meta[name=app-stage]").attr("value") || "beta",
         serverless: true,
@@ -20,16 +22,16 @@
     };
 
     var mdSvc = new showdown.Converter();
-    
-    if(W.surveyOptions.serverless)
+
+    if (W.surveyOptions.serverless)
         W.surveyOptions.api = W.surveyOptions.debug ? "http://localhost:7071/" : "https://tcmsazfunctions.azurewebsites.net/";
     else
-        W.surveyOptions.api = W.surveyOptions.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/"; 
+        W.surveyOptions.api = W.surveyOptions.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/";
 
-    $('<span class="version">Version: '  
-        + W.surveyOptions.appStage 
-        + ' ' + W.surveyOptions.appVersion 
-        + ' - survey: ' + W.surveyOptions.surveyVersion 
+    $('<span class="version">Version: '
+        + W.surveyOptions.appStage
+        + ' ' + W.surveyOptions.appVersion
+        + ' - survey: ' + W.surveyOptions.surveyVersion
         + '</span>').insertAfter($("h1:first"));
 
 
@@ -52,45 +54,64 @@
         };
     }
 
-    var dict = [];   
-    
-    $(W).on('hashchange load', function (e) {
+    function closeFact() {
+        
+        $('body').attr("class", W.bodyClasses || "");
 
+        $(".question.highlight, label.highlight").removeClass("highlight");
+
+        if (W.selectedHash && $('a[href="' + W.selectedHash + '"]').length) {
+            $('a[href="' + W.selectedHash + '"]').parents('table.swot').get(0).scrollIntoView();
+        }
+    }
+
+    $(".survey-facts-container .close-fact").click(closeFact);
+
+    var dict = [];
+
+    $(W).on('hashchange load', function (e) {
+        W.selectedHash = W.location.hash;
         var h = W.location.hash.substr(1);
         if (h.startsWith("info:")) {
+
+            if (e.type !== "hashchange" || W.assessment == null || W.assessment.surveyScore == null || W.assessment.surveyScore.issuer == null) {
+                W.location.hash = "";
+                $("body").removeClass("fact-shown");
+                return;
+            }
+
             var p = decodeURI(h.substr(5)).replace('//', '/').split('/');
-            
-            $.get("https://raw.githubusercontent.com/wiki/mvneerven/isvcanvas-help/" + p[3] +".md").then(function(md){
-                var html = mdSvc.makeHtml(md);
-                var link = "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3] + "/_edit";
-                html += '<p class="swot-more-info"><a target="_blank" href="' + link + '"><span class="ti-pencil-alt"></span> Edit Wiki topic</a></p>'
 
-                $("#survey").dialog({
-                    title: p[2],
-                    message: html,
-                    dismissVisible: false
-                }).on("hide", function () {
-                    console.log("hide");
-                    W.location.hash = "";
-                });    
-           }).fail(function(){
-                var msg = p[1] == "true" ? "Not having" : "Having";
-                msg += " " + p[4];
-                msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0];
-                msg += " in the " + W.assessment.surveyScore.issuer.stage + " stage";
-                var link = "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3] ;
-                msg += '<p class="swot-more-info"><a target="_blank" href="' + link + '"><span class="ti-pencil-alt"></span> Create Wiki topic</a></p>'
+            var showFact = function (md) {
+                var msg, link;
+                if (md) {
+                    msg = mdSvc.makeHtml(md);
+                    $(".edit-fact").attr("href", "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3] + "/_edit").attr("title", "Edit wiki page");
+                }
+                else {
+                    var msg = p[1] == "true" ? "Not having" : "Having";
+                    msg += " " + p[4];
+                    msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0];
+                    msg += " in the " + W.assessment.surveyScore.issuer.stage + " stage";
+                    $(".edit-fact").attr("href", "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3]).attr("title", "Create wiki page");;
+                }
 
-                $("#survey").dialog({
-                    title: p[2],
-                    message: msg,
-                    dismissVisible: false
-                }).on("hide", function () {
-                    console.log("hide");
-                    W.location.hash = "";
-                });    
-           });
-     
+                var answer = $("[data-key='" + p[3] + "']");
+                if (answer.length) {
+                    answer.parents('.question').addClass("highlight").get(0).scrollIntoView();
+                    answer.parents('label').addClass("highlight");
+                }
+                $("body").addClass("fact-shown fact-" + p[0].toLowerCase() + " fact-having-" + (p[1] == "false").toString().toLowerCase() );
+                var content = $("body.fact-shown .survey-facts").html("");
+                $("<h1></h1>").text(p[2]).appendTo(content);
+                $('<div/>').html(msg).appendTo(content).find("a[href]").attr("target", "_blank");
+
+            };
+
+            $.get("https://raw.githubusercontent.com/wiki/mvneerven/isvcanvas-help/" + p[3] + ".md").then(showFact).fail(function () {
+                showFact();
+            });
+
         }
         else if (h.startsWith("/")) {
             var id = h.substr(1);
@@ -103,6 +124,13 @@
             });
         }
     });
+
+    D.body.addEventListener('keyup', function (e) {
+
+        if (e.keyCode == 27)
+            closeFact();
+    });
+
 
     $("[data-action='signout']").click(function () {
         $(this).auth({ action: "signout" });
@@ -125,19 +153,19 @@
             $("body").addClass("signed-in");
 
             $('<img src="https://eu.ui-avatars.com/api/?rounded=true&format=png&name=' + W.account.name + '" />')
-                .attr("title", W.account.name + ' (' +  W.account.email + ')').appendTo($("#avatar"));
+                .attr("title", W.account.name + ' (' + W.account.email + ')').appendTo($("#avatar"));
 
             $("[data-action='signout']").removeAttr('disabled').removeClass("disabled");
 
             W.getApiToken().then(function (token) {
                 W.account.token = token;
             });
-            
+
             if (elm.attr("data-action") == 'login') {
                 $("#survey").html('Loading...');
                 takeSurvey();
             }
-            else{
+            else {
                 debugger;
             }
         });
@@ -271,7 +299,7 @@
             options.data = JSON.stringify(obj);
         }
 
-        return $.ajax(options).done(function(){
+        return $.ajax(options).done(function () {
             resetProgress()
         });
     }
@@ -289,9 +317,9 @@
     function showResults(assessment) {
         setProgress(100);
         setTimeout(resetProgress, 500);
-        
+
         W.assessment = assessment;
-        
+
         var res = assessment.surveyScore;
 
         var tpl = '<div class="col-xl-6 col-12 tcms-result"><table class="swot"><thead><th class="swot-h h2" colspan="2"></th></thead><tbody><tr><td class="swot-g" colspan="2"> </td></tr></tbody>' +
@@ -436,7 +464,7 @@
         var sv = $("#survey");
 
         if (showQuestions()) {
-            
+
 
             rest("survey/" + assessment.surveyVersion).then(function (obj) {
                 setProgress(100);
@@ -449,7 +477,7 @@
                 });
                 resetProgress();
 
-            }).fail(handleError);            
+            }).fail(handleError);
         }
     }
 
@@ -464,13 +492,13 @@
 
     function handleError(j, status, error) {
         console.log(j, status, error);
-                
+
         $('#nextBtn').removeAttr("disabled").removeClass("disabled");
 
-        if($("#survey").text() == "Loading...") {
+        if ($("#survey").text() == "Loading...") {
             $("#survey").html('Sorry, there is a problem with the survey. Please <a href="">try again</a>.');
         }
-        else{
+        else {
             /*
             $("body").dialog({
                 title: "Survey",
@@ -482,11 +510,11 @@
             */
 
         }
-        
+
         resetProgress();
 
         $("body").dialog("hide");
-        
+
         clearInterval(W.progressTimer);
     }
 
@@ -505,13 +533,13 @@
 
     function setProgress(percent) {
         var elm = $("#progress");
-        if(!percent || percent === 0){
+        if (!percent || percent === 0) {
 
-            elm.animate({opacity: 0}, 500, function(){
+            elm.animate({ opacity: 0 }, 500, function () {
                 elm.stop(true, true).css({ width: percent + "%", opacity: 1 });
             });
         }
-        else{
+        else {
             elm.animate({ width: percent + "%" }, 200);
         }
     }
@@ -520,16 +548,16 @@
         console.log(new Date().toLocaleTimeString());
         W.progressValue++;
         setProgress(W.progressValue);
-        if(W.progressValue === 100){
+        if (W.progressValue === 100) {
             resetProgress()
         }
-    
+
     }
-    
-    function resetProgress(){
+
+    function resetProgress() {
         clearInterval(W.progressTimer);
         delete W.progressTimer;
-        setProgress(0);    
+        setProgress(0);
     }
 
     function runProgress() {
@@ -547,7 +575,7 @@
             dismissVisible: false,
             confirm: "Start survey!"
         });
-        
+
         rest("survey/" + W.surveyOptions.surveyVersion).then(function (obj) {
             resetProgress();
             var survey = obj;
@@ -588,7 +616,7 @@
                         }
                         results[dict[i].id] = result;
                     }
-                    
+
                     var obj = {
                         version: W.surveyOptions.surveyVersion,
                         results: results
@@ -601,7 +629,7 @@
             }).on("ssr.progress", function (e, percent) {
                 setProgress(percent);
             }).on("ssr.group", function (e, grp) {
-                if(grp && grp.name){
+                if (grp && grp.name) {
                     if (W.surveyOptions.mode == "single") {
                         var q = $(".question:visible");
                         if (q.find("h2").length == 0) {
@@ -610,7 +638,7 @@
                     }
                 }
             });
-        }).fail(handleError);        
+        }).fail(handleError);
     }
 
 })(jQuery, window, document);

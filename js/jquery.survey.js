@@ -236,6 +236,7 @@
         },
 
         generateQuestionElement: function (question, answer) {
+
             var self = this;
             var questionElement = $('<div data-g="' + question.gId + '" data-q="' + question.name +'" id="' + question.id + '" class="question"></div>');
             var questionTextElement = $('<div class="question-text"></div>');
@@ -256,7 +257,7 @@
                     var opt = self.getOption(option);
                     var checked = answer && answer.length && name == answer[0] ? " checked": "";
                     
-                    var label = $('<label class="radio"><input type="radio" ' + checked + ' value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
+                    var label = $('<label class="radio"><input data-key="' + name + '" type="radio" ' + checked + ' value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
                     if (question.inline) label.addClass("inline col-xs-10, col-sm-4");
                     label.attr("title", opt.tooltip);
                     questionAnswerElement.append(label);
@@ -271,7 +272,7 @@
                     var option = question.options[name];
                     var opt = self.getOption(option);
                     var checked = answer && answer.length && answer.find(e => e == name) ? "checked": "";
-                    var label = $('<label class="radio"><input type="checkbox" ' + checked +' value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
+                    var label = $('<label class="radio"><input data-key="' + name + '" type="checkbox" ' + checked +' value="' + i + '" name="' + question.id + '"/><span>' + opt.title + '</span></label>');
                     label.attr("title", opt.tooltip);
                     if (question.inline) label.addClass("inline col-xs-10, col-4");
                     questionAnswerElement.append(label);

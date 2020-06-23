@@ -63,6 +63,10 @@
     border-color:rgba(244,144,154,0.4);
 }
 
+body.fact-shown #survey-canvas .survey-container .question label :checked + span {
+  border-color: #FF8B38;
+}
+
 .survey-container:not(.taken) .question label:hover span:not(.active) {
     background-color: rgba(219,221,224, 0.5);
     border-color:rgba(244,144,154,0.2);
@@ -141,6 +145,45 @@
 
 #survey-canvas .reliability-score{
   max-width: 140px;
+}
+
+#survey-canvas .question.highlight{
+  border-color: #ccc;
+  border-style: dashed;
+  padding-bottom: 2em;
+  border-width: 0px 0px 6px 0px;
+  padding-bottom: 2em;
+  margin-bottom: 2em;
+}
+
+@media (min-width: 992px){
+  #survey-canvas.content {
+    margin-top: 0px;
+  }
+
+  .survey-facts-container.content {
+    margin-bottom: 0px;
+  }
+}
+
+.survey-facts-container h1{
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.survey-facts {
+  padding-top: 10px;
+}
+
+.survey-facts-container .ti-light-bulb{
+  font-size: 48px;
+  color: rgba(244,60,20,1);
+  display: inline-block;
+  margin-top: 10px;
+}
+
+body.fact-having-true .survey-facts-container .ti-light-bulb{
+  color: rgba(60,180,20,1);
 }
 
 #survey-canvas .question label.inline {
@@ -343,9 +386,34 @@ span.ti-fill {
 }
 
 .swot-more-info{
-  margin-top: 2em;
-  padding: 1em;
-  border-top: 1px solid #ccc;
+  margin-top: 10px;
+  
+}
+
+body.fact-shown #survey-canvas {
+  overflow: hidden;
+  border-top: 2px dotted #aaa;
+}
+
+.vert-toolbar{
+  
+  padding-top: 10px;
+
+  
+}
+.vert-toolbar > a{
+  display: block;
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+.vert-toolbar button{
+  border: 0;
+  background-color: transparent;
+
+}
+.vert-toolbar button:hover{
+  color: #C42B2B;
 }
 
 .survey-intro{
@@ -381,4 +449,16 @@ body.survey-shown span.version{
   color: #444;
   padding: 1px;
   background-color: transparent;
+}
+
+.survey-facts-container {
+  display: none;
+}
+
+body.fact-shown .survey-facts-container {
+  display: block;
+  max-height: 200px;
+  box-shadow: none;
+  z-index: 1;
+  
 }

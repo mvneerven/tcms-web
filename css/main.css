@@ -58,10 +58,14 @@ footer{
   }
 
   body:not([class^="view-"]) .content  {
+    /*
     -webkit-box-shadow: 7px 14px 47px 27px rgba(0,0,0,0.75);
     -moz-box-shadow: 7px 14px 47px 27px rgba(0,0,0,0.75);
     box-shadow: 7px 14px 47px 27px rgba(0,0,0,0.75);
-
+*/
+-webkit-box-shadow: -4px -13px 40px 6px rgba(0,0,0,0.75);
+-moz-box-shadow: -4px -13px 40px 6px rgba(0,0,0,0.75);
+box-shadow: -4px -13px 40px 6px rgba(0,0,0,0.75);
     width: 100%!important;
   }
   
@@ -187,7 +191,19 @@ footer{
     border-color: #FF8B38;
   }
 
-  
+  label.radio.highlight:before {
+    content: "\e65d" /*"\e71b"*/;
+    font-family: 'themify';
+    font-size: 17px;
+    color: rgba(244,60,20,1);
+    margin-left: -18px;
+    padding-left: px;
+    vertical-align: top;
+    font-weight: 800;
+    margin-top: 2px;
+    display: inline-block;}
+
+
   #toolbar {
     margin-bottom: 20px;
     position: fixed;
@@ -273,6 +289,10 @@ footer{
 
   #survey .comment{
     color: #FF6A00;
+  }
+
+  body.fact-shown #survey .comment{
+    color: #ccc;
   }
 
   body.survey-shown #survey-canvas h1{
