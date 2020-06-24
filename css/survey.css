@@ -175,19 +175,12 @@ body.fact-shown #survey-canvas .survey-container .question label :checked + span
   padding: 10px 25px;
 }
 
-.survey-facts-container .ti-light-bulb{
-  
-  color: rgba(244,60,20,1);
-  display: inline-block;
-  margin-top: 10px;
-}
-
 [class^="ti-"].responsive, [class*=" ti-"].responsive{
   font-size: 3vw;
 }
 
 label.radio.highlight:before {
-  content: "\e695";  /* "\e65d" "\e71b"*/
+  content: "\e695"; 
   font-family: 'themify';
   font-size: 17px;
   margin-left: -18px;
