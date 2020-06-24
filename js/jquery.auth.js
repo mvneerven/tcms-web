@@ -135,10 +135,9 @@
                 auth: {
                     clientId: msalConfig.auth.clientId,
                     redirectUri: W.location.href,
-                    postLogoutRedirectUri: W.location.href
+                    postLogoutRedirectUri: W.location.href 
                 }
             }
-
             const userAgentApplication = new Msal.UserAgentApplication(config);
             userAgentApplication.logout();
         }

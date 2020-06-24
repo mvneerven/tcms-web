@@ -58,78 +58,87 @@
 
     <!-- Page Content -->
     <div class="survey-facts-container container content">
-      <div class="row">
-        <div class="col-1">
-          <span class="ti-light-bulb"></span>
-        </div>
-        <div class="col-10 survey-facts">
 
-        </div>
-        <div class="col-1 vert-toolbar">
-          <a href="#na" class="close-fact" aria-label="Close" title="Close &amp; return to SWOT Analysis">
-            <span aria-hidden="true" class="ti-close"></span>
+      <div class="row fact-toolbar">
+        <div class="col-1 ">
+          <a href="#na" class="close-fact" aria-label="Close" title="Back to SWOT Analysis">
+            <span aria-hidden="true" class="ti-arrow-left"></span>
           </a>
-          <a href="#na" target="_blank" class="edit-fact button" aria-label="Edit wiki">
+        </div>
+        <div class="col-10 text-center">
+          <span>SWOT Guidance</span>
+        </div>
+        <div class="col-1">
+          <a href="#na" target="_blank" class="edit-fact button float-right" aria-label="Edit wiki">
             <span aria-hidden="true" class="ti-pencil-alt"></span>
           </a>
         </div>
       </div>
-    </div>
-
-    <div class="container content" id="survey-canvas">
-      <div id="progress"></div>
 
       <div class="row">
-        <div class="col-lg-12">
-          <h1 class="h2">Tech Maturity Survey</h1>
 
-          <div id="survey" data-version="1.1" data-toolbar="#toolbar">
-
-            <div class="survey-start">
-              <p>
-                For the most reliable results, you should have high level knowledge of your company's:
-              </p>
-
-              <ul>
-                <li>Software Stack &amp; (Cloud) Infrastructure</li>
-                <li>Architecture Design &amp; Data</li>
-                <li>Hosting &amp; Deployment processes</li>
-                <li>Development Tooling, Team Structure &amp; Processes
-                <li>Technical Governance</li>
-              </ul>
-
-              <p>Best roles for taking the survey are:</p>
-              <ol>
-                <li><strong>Chief Technology Officer</strong></li>
-                <li>Lead Developer</li>
-                <li>Technical co-founder</li>
-              </ol>
-
-              <div class="control"><label><input id="tech-knowledge" type="checkbox" /> I have read and understand
-                  this.</label> </div>
-
-              <button title="Please log in using your preferred provider to take the survey"
-                class="btn btn btn-primary disabled" data-action="login" type="button">
-                Log in and start Survey
-              </button>
-
-            </div>
-          </div>
+        <div class="col-12 survey-facts">
 
         </div>
+
+      </div>
+    
+  </div>
+
+  <div class="container content" id="survey-canvas">
+    <div id="progress"></div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="h2">Tech Maturity Survey</h1>
+
+        <div id="survey" data-version="1.1" data-toolbar="#toolbar">
+
+          <div class="survey-start">
+            <p>
+              For the most reliable results, you should have high level knowledge of your company's:
+            </p>
+
+            <ul>
+              <li>Software Stack &amp; (Cloud) Infrastructure</li>
+              <li>Architecture Design &amp; Data</li>
+              <li>Hosting &amp; Deployment processes</li>
+              <li>Development Tooling, Team Structure &amp; Processes
+              <li>Technical Governance</li>
+            </ul>
+
+            <p>Best roles for taking the survey are:</p>
+            <ol>
+              <li><strong>Chief Technology Officer</strong></li>
+              <li>Lead Developer</li>
+              <li>Technical co-founder</li>
+            </ol>
+
+            <div class="control"><label><input id="tech-knowledge" type="checkbox" /> I have read and understand
+                this.</label> </div>
+
+            <button title="Please log in using your preferred provider to take the survey"
+              class="btn btn btn-primary disabled" data-action="login" type="button">
+              Log in and start Survey
+            </button>
+
+          </div>
+        </div>
+
       </div>
     </div>
+  </div>
 
-    <div id="toolbar"></div>
+  <div id="toolbar"></div>
 
-    <footer class="text-center app-info">
+  <footer class="text-center app-info">
 
-      ISV Canvas is a <a
-        title="JAMstack - Fast and secure sites and dynamic apps with JavaScript, APIs, and prerendered Markup, served directly from Cloud Storage"
-        href="https://jamstack.org/" target="_blank">JAMstack</a> site</a> - &copy; 2017-2020 Neerventure.com | <a
-        title="Privacy Policy" href="/privacy-policy.html">Privacy Policy</a> | <a title="Terms &amp; Conditions"
-        href="/terms-and-conditions.html">Terms &amp; Conditions</a>
-    </footer>
+    ISV Canvas is a <a
+      title="JAMstack - Fast and secure sites and dynamic apps with JavaScript, APIs, and prerendered Markup, served directly from Cloud Storage"
+      href="https://jamstack.org/" target="_blank">JAMstack</a> site</a> - &copy; 2017-2020 Neerventure.com | <a
+      title="Privacy Policy" href="/privacy-policy.html">Privacy Policy</a> | <a title="Terms &amp; Conditions"
+      href="/terms-and-conditions.html">Terms &amp; Conditions</a>
+  </footer>
 
   </div>
 

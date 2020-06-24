@@ -55,11 +55,8 @@
     }
 
     function closeFact() {
-        
         $('body').attr("class", W.bodyClasses || "");
-
         $(".question.highlight, label.highlight").removeClass("highlight");
-
         if (W.selectedHash && $('a[href="' + W.selectedHash + '"]').length) {
             $('a[href="' + W.selectedHash + '"]').parents('table.swot').get(0).scrollIntoView();
         }
@@ -90,8 +87,8 @@
                 }
                 else {
                     var msg = p[1] == "true" ? "Not having" : "Having";
-                    msg += " " + p[4];
-                    msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0];
+                    msg += " " + p[4].toLowerCase();
+                    msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0].toLowerCase();
                     msg += " in the " + W.assessment.surveyScore.issuer.stage + " stage";
                     $(".edit-fact").attr("href", "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3]).attr("title", "Create wiki page");;
                 }
@@ -103,9 +100,16 @@
                 }
                 $("body").addClass("fact-shown fact-" + p[0].toLowerCase() + " fact-having-" + (p[1] == "false").toString().toLowerCase() );
                 var content = $("body.fact-shown .survey-facts").html("");
-                $("<h1></h1>").text(p[2]).appendTo(content);
+                $('<h1 class="h2"></h1>').text(p[2]).appendTo(content);
                 $('<div/>').html(msg).appendTo(content).find("a[href]").attr("target", "_blank");
 
+
+                setTimeout(() => {
+                    $("#survey-canvas").one("scroll", function(){
+                        closeFact();
+                    })    
+                }, 1000);
+                
             };
 
             $.get("https://raw.githubusercontent.com/wiki/mvneerven/isvcanvas-help/" + p[3] + ".md").then(showFact).fail(function () {
@@ -132,7 +136,7 @@
     });
 
 
-    $("[data-action='signout']").click(function () {
+    $("[data-action='signout']").click(function (e) {
         $(this).auth({ action: "signout" });
         e.returnValue = false;
         return false;
