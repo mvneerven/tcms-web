@@ -165,6 +165,9 @@ box-shadow: -4px -13px 40px 6px rgba(0,0,0,0.75);
     margin-bottom: 1em;
   }
 
+  #navbarDropdownMenuLink{
+    overflow: hidden;
+  }
 
   #survey-canvas .survey-container .question-text{
       font-weight: 500;
@@ -342,9 +345,7 @@ body #avatar:before {
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   content: "\e602";  
-  display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: 1em;
 }
 
 body.signed-in #avatar {

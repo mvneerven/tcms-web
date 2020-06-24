@@ -157,7 +157,7 @@ body.fact-shown #survey-canvas .survey-container .question label :checked + span
 }
 
 @media (min-width: 992px){
-  #survey-canvas.content {
+  body.fact-shown #survey-canvas.content {
     margin-top: 0px;
   }
 
