@@ -8,6 +8,10 @@ a{
   color: #E15E00;
 }
 
+a#backBtn{
+  color: #333;
+}
+
 h1, h2, h3, h4, .h1, .h2, .h3, .h4 {
   font-family: 'Lato', sans-serif; 
 }
@@ -29,7 +33,6 @@ footer{
   display: inline-block;
   width: 250px;
   height: 40px;
-  -background-image: url("../img/isv-canvas-logo-03.svg")!important;
   background-image: url("../img/isv-canvas-logo-04.png")!important;
   background-repeat: no-repeat ;
   background-size: contain;
@@ -181,18 +184,21 @@ box-shadow: -4px -13px 40px 6px rgba(0,0,0,0.75);
       color: #000;
   }
   
-  #survey-canvas  .survey-container:not(.taken) .question label:hover span:not(.active){
+  #survey-canvas  .survey-container:not(.taken) .question label:not(.active):hover span{
     border-color: #FF8B38;
   }
 
-  #survey-canvas  .survey-container:not(.taken) .question label:hover span.active{
+  #survey-canvas  .survey-container:not(.taken) .question label.active:hover span{
     background-color: #FF8B38;
-    -webkit-transition:background .2s;
-    -moz-transition:background .2s;
-    -o-transition:background .2s;
-    transition:background .2s
+    -webkit-transition:background-color .2s;
+    -moz-transition:background-color .2s;
+    -o-transition:background-color .2s;
+    transition:background-color .2s;
   }
   
+  #survey-canvas .taken  {
+    pointer-events: none;
+  }
 
   #survey-canvas .survey-container:not(.taken) .question label :checked + span{
     border-color: #FF8B38;
@@ -271,6 +277,10 @@ box-shadow: -4px -13px 40px 6px rgba(0,0,0,0.75);
 
   #progress {
     width: 0%;
+    -webkit-transition:width .2s;
+    -moz-transition:width .2s;
+    -o-transition:width .2s;
+    transition:width .2s;
     padding: 0;
     margin: 0;
     margin-left: -15px;

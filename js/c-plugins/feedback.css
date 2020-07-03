@@ -1,0 +1,68 @@
+
+.feedback-container {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 260px;
+    margin-left: -3px;
+    margin-bottom: -3px;
+  }
+  
+  .feedback-panel  {
+    -display: none;
+    float: left;
+    width: 300px;
+    
+    margin-left: -300px;
+    transition: margin-left 400ms;
+    height: 100%;
+    z-index: 1000;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 10px;
+    background-clip: 'padding-box';
+    border: 1px solid rgba(0,0,0,.2);
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    
+    background-color: white;
+    -webkit-box-shadow: 9px -9px 31px -15px rgba(0,0,0,0.75);
+    -moz-box-shadow: 9px -9px 31px -15px rgba(0,0,0,0.75);
+    box-shadow: 9px -9px 31px -15px rgba(0,0,0,0.75);
+  }
+  
+  .feedback-container .feedback-tab {
+    float: right;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    text-align: center;
+    width: 120px;
+    height: 42px;
+    background-color: rgba(0,0,0,0.5);
+    margin-top: 60px;
+    margin-left: -40px;
+    padding-top: 5px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    -webkit-box-shadow: 9px -9px 31px -15px rgba(0,0,0,0.75);
+  -moz-box-shadow: 9px -9px 31px -15px rgba(0,0,0,0.75);
+  box-shadow: 9px -9px 31px -15px rgba(0,0,0,0.75);
+  }
+  
+  .feedback-container .feedback-tab:hover { background-color: rgba(0,0,0,0.4); }
+  
+  .feedback-container form textarea { resize: none; }
+
+  .feedback-container .feedback-panel.show{
+      -display: block;
+      margin-left: 0px;
+      transition: margin-left 400ms;
+  }

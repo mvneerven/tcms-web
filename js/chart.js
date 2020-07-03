@@ -1,5 +1,5 @@
 /*
-    jquery.chart
+    chart
 */
 ;
 (function ($, W, D, undefined) {
@@ -59,11 +59,12 @@
         }
     };
 
+    
     $.fn[pluginName] = function (options) {
         return this.each(function () {
             if (typeof (options) === 'string') {
                 var data = $.data(this, "ssr.plugin." + pluginName);
-                if (data && $.isFunction(data[options])){
+                if (data && $.isFunction(data[options])) {
                     data[options]();
                 }
             }
@@ -73,4 +74,4 @@
         });
     };
 
-})(jQuery, window, document);
+})(window.core, window, document);

@@ -58,6 +58,12 @@
     
 }
 
+.survey-container .question.required .question-text:after{
+  content: " *";
+  font-size: 1.2em;
+  color: rgba(244,60,20,1);
+}
+
 .survey-container .question label :checked + span {
     background-color: rgba(219,221,224, 1);
     border-color:rgba(244,144,154,0.4);
@@ -279,7 +285,10 @@ th.swot-h {
 
 .swot td ul>li:hover ul li {
   display: block;
-  transition: all 0.5s ease;
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .swot-q {

@@ -45,4 +45,4 @@
 
     })
 
-})(jQuery, window, document);
+})(window.core, window, document);

@@ -22,36 +22,14 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css" />
     <link href="css/main.css?v=2.8" rel="stylesheet">
-
     <link rel="shortcut icon" href="img/icon-64.png" />
 </head>
 
-<body>
+<body data-c-plugin="Feedback">
     <div class="wrapper">
-        <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top header">
-            <div class="container">
-                <a class="navbar-brand" href="/"></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                    aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
-                        </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" href="">About
-                                <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <nav data-c-plugin="Menu"></nav>
 
-        <!-- Page Content -->
+        
         <div class="container content">
             <div class="row">
                 <div class="col-lg-12">
@@ -71,7 +49,11 @@
                     <p>
                         Marc currently helps Startups, Scaleups and ISVs in strategic advice and governance roles, and
                         is a Native Cloud and Semantic Data advocate.
+                    </p>
+
+                    <h2 class="h3">History</h2>
                     <p>
+
                         ISV Canvas started when Microsoft asked Neerventure, in 2017, to assist with assessing Startups
                         that wanted to get <a href="https://en.wikipedia.org/wiki/Microsoft_BizSpark" target="_blank"
                             title="Microsoft BizSpark Startup program">BizSpark</a> funding.
@@ -97,9 +79,22 @@
                         ISV programs, M&amp;A and investors.
                     </p>
 
+
+
+                    <h2 class="h3">Opportunities</h2>
                     <p>
                         Actively involved in the development of the ISV Canvas are Microsoft (ISV program), a few
                         Investors and companies in the M&A and Due Diligence field.
+                    </p>
+                    <p>
+                        We are still actively looking for more partners, contributors and testers.
+                    </p>
+
+                    <p class="text-center">
+
+                        <a title="Send an email to info@isvcanvas.com to partner, contribute or discuss ISV Canvas"
+                            class="btn btn-primary btn-lg" href="mailto:info@isvcanvas.com?subject=ISV%20Canvas">Get
+                            in touch</a>
                     </p>
                 </div>
             </div>
@@ -151,6 +146,7 @@
                     <h2>Technology</h2>
                     <ul>
                         <li>Single Page Application (SPA) design</li>
+                        <li>No front-end framework dependency</li>
                         <li>100% static HTML served directly from Cloud Storage</li>
                         <li>CloudFlare caching &amp; SSL</li>
                         <li>Azure AD B2C IDaaS (Identity as a Service)</li>
@@ -173,10 +169,7 @@
 
     </div>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
+    <script src="js/core.min.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-169426273-1"></script>
     <script>

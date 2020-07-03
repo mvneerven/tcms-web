@@ -2,20 +2,22 @@
     tcms enrichment
 */
 ;
-(function ($, W, D, undefined) {
+(function (C, W, D, undefined) {
     'use strict';
 
-    W.bodyClasses = $("body").attr("class");
+    W.bodyClasses = C("body").attr("class");
+
 
     W.surveyOptions = {
-        appStage: $("meta[name=app-stage]").attr("value") || "beta",
+        appStage: C("meta[name=app-stage]").attr("value") || "beta",
         serverless: true,
-        appVersion: $("meta[name=app-version]").attr("value").replace("**APPVER**", "") || "0.0.1",
-        surveyVersion: $("meta[name=survey-version]").attr("value"),
+        appVersion: C("meta[name=app-version]").attr("value").replace("**APPVER**", "") || "0.0.1",
+        surveyVersion: C("meta[name=survey-version]").attr("value"),
         mode: "single",
         debug: D.location.hostname == "localhost",
         api: undefined
     };
+
 
     W.account = {
         email: "anonymous"
@@ -28,16 +30,16 @@
     else
         W.surveyOptions.api = W.surveyOptions.debug ? "https://localhost:44367/" : "https://tcmsapi.azurewebsites.net/";
 
-    $('<span class="version">Version: '
+    C('<span class="version">Version: '
         + W.surveyOptions.appStage
         + ' ' + W.surveyOptions.appVersion
         + ' - survey: ' + W.surveyOptions.surveyVersion
-        + '</span>').insertAfter($("h1:first"));
+        + '</span>').put("after", "#main-title");
 
 
     if (window.JSON && !window.JSON.dateParser) {
-        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
-        var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?C/;
+        var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]C/;
 
         JSON.dateParser = function (key, value) {
             if (typeof value === 'string') {
@@ -55,25 +57,34 @@
     }
 
     function closeFact() {
-        $('body').attr("class", W.bodyClasses || "");
-        $(".question.highlight, label.highlight").removeClass("highlight");
-        if (W.selectedHash && $('a[href="' + W.selectedHash + '"]').length) {
-            $('a[href="' + W.selectedHash + '"]').parents('table.swot').get(0).scrollIntoView();
+        C('body').attr("class", W.bodyClasses || "");
+        C(".question.highlight, label.highlight").removeClass("highlight");
+        if (W.selectedHash && C('a[href="' + W.selectedHash + '"]').length) {
+            C('a[href="' + W.selectedHash + '"]').up('table.swot', true).scrollTo();
         }
     }
 
-    $(".survey-facts-container .close-fact").click(closeFact);
+    C(".survey-facts-container .close-fact").on("click", closeFact);
 
     var dict = [];
 
-    $(W).on('hashchange load', function (e) {
+    C(W).on('hashchange load', function (e) {
         W.selectedHash = W.location.hash;
         var h = W.location.hash.substr(1);
-        if (h.startsWith("info:")) {
+
+        if (h.startsWith("sign-out")) {
+
+            let msal = C("body").getPlugin("MsalAuth");
+            msal.signOut();
+
+
+        }
+
+        else if (h.startsWith("info:")) {
 
             if (e.type !== "hashchange" || W.assessment == null || W.assessment.surveyScore == null || W.assessment.surveyScore.issuer == null) {
                 W.location.hash = "";
-                $("body").removeClass("fact-shown");
+                C("body").removeClass("fact-shown");
                 return;
             }
 
@@ -83,48 +94,52 @@
                 var msg, link;
                 if (md) {
                     msg = mdSvc.makeHtml(md);
-                    $(".edit-fact").attr("href", "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3] + "/_edit").attr("title", "Edit wiki page");
+                    C(".edit-fact").attr("href", "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3] + "/_edit").attr("title", "Edit wiki page");
                 }
                 else {
                     var msg = p[1] == "true" ? "Not having" : "Having";
                     msg += " " + p[4].toLowerCase();
                     msg += " is considered " + (p[0].startsWith('O') ? "an " : "a ") + p[0].toLowerCase();
                     msg += " in the " + W.assessment.surveyScore.issuer.stage + " stage";
-                    $(".edit-fact").attr("href", "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3]).attr("title", "Create wiki page");;
+                    C(".edit-fact").attr("href", "https://github.com/mvneerven/isvcanvas-help/wiki/" + p[3]).attr("title", "Create wiki page");;
                 }
 
-                var answer = $("[data-key='" + p[3] + "']");
+                var answer = C("[data-key='" + p[3] + "']");
                 if (answer.length) {
-                    answer.parents('.question').addClass("highlight").get(0).scrollIntoView();
-                    answer.parents('label').addClass("highlight");
+                    answer.up('.question', true).addClass("highlight").scrollTo();
+                    answer.up('label', true).addClass("highlight");
                 }
-                $("body").addClass("fact-shown fact-" + p[0].toLowerCase() + " fact-having-" + (p[1] == "false").toString().toLowerCase() );
-                var content = $("body.fact-shown .survey-facts").html("");
-                $('<h1 class="h2"></h1>').text(p[2]).appendTo(content);
-                $('<div/>').html(msg).appendTo(content).find("a[href]").attr("target", "_blank");
+                C("body").addClass("fact-shown fact-" + p[0].toLowerCase() + " fact-having-" + (p[1] == "false").toString().toLowerCase());
+                var content = C("body.fact-shown .survey-facts").html("");
+                C('<h1 class="h2"></h1>').text(p[2]).put("append", content);
+                C('<div/>').html(msg).put("append", content).find("a[href]").attr("target", "_blank");
 
 
                 setTimeout(() => {
-                    $("#survey-canvas").one("scroll", function(){
+                    C("#survey-canvas").one("scroll", function () {
                         closeFact();
-                    })    
+                    })
                 }, 1000);
-                
+
             };
 
-            $.get("https://raw.githubusercontent.com/wiki/mvneerven/isvcanvas-help/" + p[3] + ".md").then(showFact).fail(function () {
-                showFact();
-            });
+            C.get("https://raw.githubusercontent.com/wiki/mvneerven/isvcanvas-help/" + p[3] + ".md", showFact).catch(() => { showFact() });
 
         }
         else if (h.startsWith("/")) {
             var id = h.substr(1);
-            rest("surveystorage?id=" + id).then(function (obj) {
+            rest({
+                url: "surveystorage?id=" + id,
+                success: function (obj) {
 
-                if (W.location.search.length)
-                    setView(W.location.search);
+                    if (W.location.search.length)
+                        setView(W.location.search);
 
-                showResults(obj);
+                    showResults(obj.data);
+
+
+                }
+
             });
         }
     });
@@ -135,48 +150,38 @@
             closeFact();
     });
 
-
-    $("[data-action='signout']").click(function (e) {
-        $(this).auth({ action: "signout" });
-        e.returnValue = false;
-        return false;
+    C("#tech-knowledge").on("change", function () {
+        var c = !C(this).prop("checked");
+        C("#log-in").block(c);
     });
 
-    $("#tech-knowledge").on("change", function () {
-        $("[data-action='login']").toggleClass("disabled");
-        var isDisabled = $("button[data-action='login']").is(".disabled");
-        $("[data-action='login']")[isDisabled ? "attr" : "removeAttr"]("disabled", "disabled");
-    });
+    C("#log-in").on("click", function (e) {
+        let msal = C("body").getPlugin("MsalAuth");
+
+        C("body").one("loggedin", (e) => {
+
+            W.account = e.detail;
+
+            C("#log-in").removeClass("btn-primary").block()
+            C("#take-survey").addClass("btn-primary").tooltip("Logged in as " + window.account.email);;
 
 
-    $("[data-action='login']").click(function (e) {
-        var elm = $(this);
-        elm.auth({ action: "login", type: "per" }).on("ssr.loggedin", function (e, account) {
-            W.account = account;
-
-            $("body").addClass("signed-in");
-
-            $('<img src="https://eu.ui-avatars.com/api/?rounded=true&format=png&name=' + W.account.name + '" />')
-                .attr("title", W.account.name + ' (' + W.account.email + ')').appendTo($("#avatar"));
-
-            $("[data-action='signout']").removeAttr('disabled').removeClass("disabled");
-
-            W.getApiToken().then(function (token) {
+            msal.getApiToken().then(function (token) {
                 W.account.token = token;
+                C("[data-action='signout'], #take-survey").block(false);
             });
+        })
 
-            if (elm.attr("data-action") == 'login') {
-                $("#survey").html('Loading...');
-                takeSurvey();
-            }
-            else {
-                debugger;
-            }
-        });
+        msal.login();
+
         e.returnValue = false;
         return false;
     });
 
+    C("#take-survey").on("click", (e) => {
+        C("#survey").html('Loading...');
+        takeSurvey();
+    })
 
     function convertQType(id, type) {
         switch (type) {
@@ -228,7 +233,6 @@
         return [Math.round((t - R) * p) + R, Math.round((t - G) * p) + G, Math.round((t - B) * p) + B];
     }
 
-    // convert to jquery.survey.js format....
     var convertToSurvey = function (obj) {
         var dictA = []; // keep disctionary of keys for response.
         var j = 0;
@@ -281,31 +285,30 @@
         return questions;
     };
 
-    function rest(url, obj) {
-        runProgress();
+    function rest(o) {
+        startProgress();
 
-        var options = {
-            type: obj ? "POST" : "GET",
-            url: W.surveyOptions.api + url,
-
+        var options = C.extend({
+            type: "GET",
             contentType: "application/json",
-
             dataType: "json",
-            success: function (res) {
-            }
-        };
+            success: function () { }
+        }, o);
+
+        options.url = W.surveyOptions.api + options.url,
+
+            console.log("Fetching " + options.url);
+
         if (W.account && W.account.token) {
             options.headers = {
                 "Authorization": W.account.token
             }
         }
-        if (obj) {
-            options.data = JSON.stringify(obj);
+        if (options.data) {
+            options.method = "POST";
+            options.data = JSON.stringify(options.data);
         }
-
-        return $.ajax(options).done(function () {
-            resetProgress()
-        });
+        return C.req(options);
     }
 
     function gotoPermaLink(id) {
@@ -314,13 +317,13 @@
 
     // summary/view/details/questions
     function setView(type) {
-        $("body").addClass("view-" + type.substr(1));
-        $("div.container.content").removeClass("container").css({ padding: "15px" });
+        C("body").addClass("view-" + type.substr(1));
+        C("div.container.content").removeClass("container").css({ padding: "15px" });
     }
 
     function showResults(assessment) {
         setProgress(100);
-        setTimeout(resetProgress, 500);
+        setTimeout(stopProgress, 500);
 
         W.assessment = assessment;
 
@@ -331,26 +334,27 @@
             '<tbody class="swot-qc"><tr><td class="swot-q swot-s"><div><h4>Strengths</h4></div></td><td class="swot-q swot-w"><div><h4>Weaknesses</h4></div></td></tr>' +
             '<tr><td class="swot-q swot-o"><div><h4>Opportunities</h4></div></td><td class="swot-q swot-t"><div><h4>Threats</h4></div></td></tr></tbody></table></div>';
 
-        $(".survey-conclusion").remove();
-        $(".survey-toolbar").hide();
+        C(".survey-conclusion").remove();
+        C(".survey-toolbar").hide();
 
-        var results = $('<div class="survey-conclusion"></div>');
+        var results = C('<div class="survey-conclusion"></div>');
 
-        results.insertAfter("#survey");
-        var vis = $('<div class="row survey-results"></div>').appendTo(results);
-        var conclusion = $('<div class="row"></div>').insertBefore(vis);
-        var info = $('<div class="col-12 scan-info"></div>').appendTo(conclusion);
+        results.put("after", "#survey");
+        var vis = C('<div class="row survey-results"></div>').put("append", results);
+        var conclusion = C('<div class="row"></div>').put("before", vis);
+        var info = C('<div class="col-12 scan-info"></div>').put("append", conclusion);
         var color = getColor(res.overallScore);
 
 
-        $('<p class="tcms-issuer"><em> ' + res.issuer.company + ' (' + res.issuer.stage + ')<em><br/>').appendTo(info);
-        $('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress + ')<em> at ' + JSON.dateParser("date", assessment.surveyDateTimeTaken) + '</p>').appendTo(info);
+        C('<p class="tcms-issuer"><em> ' + res.issuer.company + ' (' + res.issuer.stage + ')<em><br/>').put("append", info);
+        C('<em>Survey completed by ' + res.issuer.fullName + ' (' + res.issuer.role + ' - ' + res.issuer.emailAddress + ')<em> at ' + JSON.dateParser("date", assessment.surveyDateTimeTaken) + '</p>').put("append", info);
 
         if (showScores()) {
-            var overallResultsTable = $(tpl.replace('col-xl-6 col-12', 'col-sm-12 offset-sm-0 col-lg-6 offset-lg-3')).appendTo(vis);
+            var overallResultsTable = C(tpl.replace('col-xl-6 col-12', 'col-sm-12 offset-sm-0 col-lg-6 offset-lg-3')).put("append", vis);
             overallResultsTable.addClass("overall").find('.swot-h').text("ISV Canvas Maturity Score");
+            overallResultsTable.find(".swot-qc, .swot-a.h4").hide();
 
-            $('<div></div>').appendTo(overallResultsTable.find(".swot-g")).chart({
+            C('<div></div>').put("append", overallResultsTable.find(".swot-g")).chart({
                 type: "circular",
                 title: "",
                 outerClass: "tcms-score",
@@ -361,7 +365,7 @@
 
             color = getColor(res.reliability);
 
-            $('<div></div>').appendTo(overallResultsTable.find(".swot-g")).chart({
+            C('<div></div>').put("append", overallResultsTable.find(".swot-g")).chart({
                 type: "circular",
                 title: "Score Reliability",
                 outerClass: "reliability-score",
@@ -375,13 +379,13 @@
                 var group = res.scores[key];
 
                 ar.push({ key: key, weight: group.weightPercent, name: group.name });
-                var table = $(tpl).appendTo(vis);
+                var table = C(tpl).put("append", vis);
                 table.attr("id", 'grp-' + key);
                 table.addClass(key);
-                table.find('.swot-h:first').text(group.name);
+                table.find('.swot-h:first-child').text(group.name);
                 color = getColor(group.score);
 
-                $("<div></div>").appendTo(table.find(".swot-g")).chart({
+                C("<div></div>").put("append", table.find(".swot-g")).chart({
                     type: "circular",
                     outerClass: "col-8",
                     innerClass: "offset-5",
@@ -397,13 +401,13 @@
                     var block = table.find(".swot-" + letter + " > div");
                     var swot = group.swot[i];
                     if (swot) {
-                        var ul = $('<ul class="swot-topic"></ul>').appendTo(block);
+                        var ul = C('<ul class="swot-topic"></ul>').put("append", block);
 
                         for (var topic in swot) {
                             var se = swot[topic];
                             var txt = "";
-                            var li = $('<li></li>').appendTo(ul).text(topic)
-                            var ulSub = $('<ul class="swot-expl"></ul>').appendTo(li);
+                            var li = C('<li></li>').put("append", ul).text(topic)
+                            var ulSub = C('<ul class="swot-expl"></ul>').put("append", li);
 
                             for (var elem in se) {
                                 var m = se[elem].isMissingAnswer;
@@ -412,114 +416,59 @@
 
                                 var path = i + "/" + se[elem].isMissingAnswer + "/" + topic + "/" + se[elem].answer + "/" + se[elem].description;
 
-                                var liSub = $('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic + '"></span><a href="#info:' + encodeURI(path) + '">' + se[elem].description + '</a></li>').appendTo(ulSub)
+                                var liSub = C('<li class="swot-xp ' + c + '"><span class="ti ti-' + ic + '"></span><a href="#info:' + encodeURI(path) + '">' + se[elem].description + '</a></li>').put("append", ulSub)
                             }
                         }
                     }
                 }
-
-                table.find(".swot-q > div").each(function () {
-                    var div = $(this);
-                    if (div.find("ul").length == 0) {
-                        $('<ul><li class="swot-none">None</li></ul>').appendTo(div);
-                    }
-                });
             }
-
-            ar.sort(function (a, b) {
-                return b.weight - a.weight;
-            });
-
-            var quads = ['s', 'w', 'o', 't'];
-            for (var a in ar) {
-                var ul = null;
-                for (var quad in quads) {
-                    var q = ".swot-q.swot-" + quads[quad] + ">div:first";
-                    var el = overallResultsTable.find(q);
-                    var gEl = $('div.tcms-result.' + ar[a].key + ' ' + q);
-                    var n = 0;
-                    gEl.find('ul.swot-topic > li:not(.swot-none)').each(function () {
-                        var subEl = $(this);
-                        n++;
-                        if (n <= 2) {
-                            ul = el.find('.swot-gr-name.swot-gr-' + ar[a].key + " > ul");
-                            if (ul.length == 0) {
-                                var div = $('<div class="swot-gr-name swot-gr-' + ar[a].key + '"><a title="Go to group details" href="#grp-' + ar[a].key + '">' + ar[a].name + '</a></div>').appendTo(el);
-                                ul = $('<ul class="swot-col"></ul>').appendTo(div);
-
-                            }
-                            var txt = subEl.get(0).childNodes[0].nodeValue.trim();
-
-                            $('<li>' + txt + '</li>').appendTo(ul);
-                        }
-                    });
-                }
-            }
-
-            var el = overallResultsTable.find('.swot-q').each(function () {
-                var td = $(this).find(">div:first");
-                if (td.find(".swot-gr-name").length == 0) {
-                    $('<div class="swot-gr-name">None</div>').appendTo(td);
-                }
-            });
         }
 
         //TODO: load survey in read-only mode with answers
-        var sv = $("#survey");
+        var sv = C("#survey");
 
         if (showQuestions()) {
+            rest({
+                url: "survey/" + assessment.surveyVersion,
+                success: function (obj) {
+                    setProgress(100);
 
+                    console.log("survey/" + assessment.surveyVersion, obj);
 
-            rest("survey/" + assessment.surveyVersion).then(function (obj) {
-                setProgress(100);
-                //W.surveyOptions = obj;
-                sv.html("");
-                sv.survey({
-                    questions: convertToSurvey(obj),
-                    answers: assessment.surveyAnswers,
-                    mode: "viewresults"
-                });
-                resetProgress();
+                    sv.html('<hr/><h2 class="h1">Answers given:</h2>');
 
-            }).fail(handleError);
+                    sv.survey({
+                        questions: convertToSurvey(obj.data),
+                        answers: assessment.surveyAnswers,
+                        mode: "viewresults"
+                    });
+                    stopProgress();
+                },
+            }).catch(handleError);
         }
     }
 
     // summary/view/details/questions
     function showQuestions() {
-        return !$("body").hasClass("view-summary");
+        return !C("body").hasClass("view-summary");
     }
 
     function showScores() {
-        return !$("body").hasClass("view-questions");
+        return !C("body").hasClass("view-questions");
     }
 
     function handleError(j, status, error) {
         console.log(j, status, error);
 
-        $('#nextBtn').removeAttr("disabled").removeClass("disabled");
+        C('#nextBtn').block(false)
 
-        if ($("#survey").text() == "Loading...") {
-            $("#survey").html('Sorry, there is a problem with the survey. Please <a href="">try again</a>.');
-        }
-        else {
-            /*
-            $("body").dialog({
-                title: "Survey",
-                message: '<p>We are sorry but there was a problem with the survey.</p>',
-                dismissVisible: true,
-                confirmVisible: false,
-                dismiss: "Close"
-            });
-            */
-
+        if (C("#survey").text() == "Loading...") {
+            C("#survey").html('Sorry, there is a problem with the survey. Please <a href="">try again</a>.');
         }
 
-        resetProgress();
+        C.dlg();
 
-        $("body").dialog("hide");
-
-        clearInterval(W.progressTimer);
+        stopProgress();
     }
 
     function getCompanyFromAccount() {
@@ -536,113 +485,129 @@
     }
 
     function setProgress(percent) {
-        var elm = $("#progress");
-        if (!percent || percent === 0) {
 
-            elm.animate({ opacity: 0 }, 500, function () {
-                elm.stop(true, true).css({ width: percent + "%", opacity: 1 });
-            });
+        var elm = C("#progress");
+        if (!percent || percent === 0) {
+            elm.style({ width: 0 });
         }
         else {
-            elm.animate({ width: percent + "%" }, 200);
+            elm.style({ width: percent + "%" });
         }
     }
 
     function showProgress() {
-        console.log(new Date().toLocaleTimeString());
         W.progressValue++;
         setProgress(W.progressValue);
         if (W.progressValue === 100) {
-            resetProgress()
+            stopProgress()
         }
 
     }
 
-    function resetProgress() {
+    function stopProgress() {
         clearInterval(W.progressTimer);
         delete W.progressTimer;
         setProgress(0);
     }
 
-    function runProgress() {
-        W.progressValue = 0;
+    function startProgress() {
+        setProgress(0);
+
         W.progressTimer = setInterval(showProgress, 100);
     }
 
     function takeSurvey() {
-        var sv = $("#survey");
 
-        $("body").dialog({
+        var sv = C("#survey");
+
+        C.dlg({
+            modal: true,
             title: "Survey",
-            message: '<p>Please take your time to fill out the survey to the best of your knowledge.</p>' +
-                '<p>Most questions can be skipped. If you don\'t know the answer to a question, don\'t worry and skip it.</p>',
-            dismissVisible: false,
-            confirm: "Start survey!"
+            confirmText: "Start survey!",
+            body: '<p>Please take your time to fill out the survey to the best of your knowledge.</p>' +
+                '<p>Most questions can be skipped. If you don\'t know the answer to a question, don\'t worry and skip it.</p>'
         });
 
-        rest("survey/" + W.surveyOptions.surveyVersion).then(function (obj) {
-            resetProgress();
-            var survey = obj;
-            sv.html("").survey({
-                rawSurvey: survey,
-                mode: W.surveyOptions.mode,
-                questions: convertToSurvey(obj),
-                answers: {
-                    fullname: W.account.name,
-                    email: W.account.email,
-                    company: getCompanyFromAccount(),
-                    website: getWebsiteFromAccount()
-                },
-                finish: function (survey) {
-                    setProgress(100);
+        rest({
+            url: "survey/" + W.surveyOptions.surveyVersion,
+            success: function (obj) {
+                stopProgress();
+                var survey = obj.data;
+                var q = convertToSurvey(survey);
 
-                    $('#nextBtn').attr("disabled", "disabled").addClass("disabled");
 
-                    $(".survey-intro").hide();
+                sv.html("").survey({
+                    rawSurvey: survey,
+                    mode: W.surveyOptions.mode,
+                    questions: q,
+                    answers: {
+                        fullname: W.account.name,
+                        email: W.account.email,
+                        company: getCompanyFromAccount(),
+                        website: getWebsiteFromAccount()
+                    },
+                    finish: function (survey) {
+                        setProgress(100);
 
-                    var results = {};
+                        C('#nextBtn').block();
 
-                    for (var i = 0; i < survey.questions.length; i++) {
-                        var result = [];
-                        var q = survey.questions[i];
-                        var a = survey.getQuestionAnswer(q).value;
-                        if (Array.isArray(a)) {
-                            for (var k in a) {
-                                result.push(dict[i].answers[a[k]]);
+                        C(".survey-intro").hide();
+
+                        var results = {};
+
+                        for (var i = 0; i < survey.questions.length; i++) {
+                            var result = [];
+                            var q = survey.questions[i];
+                            var a = survey.getQuestionAnswer(q).value;
+                            if (Array.isArray(a)) {
+                                for (var k in a) {
+                                    result.push(dict[i].answers[a[k]]);
+                                }
+                            }
+                            else if (q.type.startsWith("text-field-")) {
+                                result.push(a);
+                            }
+                            else {
+
+                                result.push(dict[i].answers[a]);
+                            }
+                            results[dict[i].id] = result;
+                        }
+
+                        var obj = {
+                            version: W.surveyOptions.surveyVersion,
+                            results: results
+                        };
+
+                        rest({
+                            url: "surveyresults",
+                            data: obj,
+                            success: function (obj) {
+
+                                gotoPermaLink(obj.data.id);
+                                stopProgress();
+                            }
+                        }).catch(handleError);
+                    }
+                }).on("ssr.progress", function (e) {
+
+                    var percent = e.detail.percentage;
+
+                    setProgress(percent);
+                }).on("ssr.group", function (e, grp) {
+                    if (grp && grp.name) {
+                        if (W.surveyOptions.mode == "single") {
+                            //var q = C(".question:visible"); // :not([style='display:none'])
+                            var q = C(".question:not([style='display:none']");
+                            if (q.find("h2").length == 0) {
+                                q.prepend('<h2>' + grp.name + '</h2>');
                             }
                         }
-                        else if (q.type.startsWith("text-field-")) {
-                            result.push(a);
-                        }
-                        else {
-
-                            result.push(dict[i].answers[a]);
-                        }
-                        results[dict[i].id] = result;
                     }
-
-                    var obj = {
-                        version: W.surveyOptions.surveyVersion,
-                        results: results
-                    };
-
-                    rest("surveyresults", obj).then(function (obj) {
-                        gotoPermaLink(obj.id);
-                    }).fail(handleError);
-                }
-            }).on("ssr.progress", function (e, percent) {
-                setProgress(percent);
-            }).on("ssr.group", function (e, grp) {
-                if (grp && grp.name) {
-                    if (W.surveyOptions.mode == "single") {
-                        var q = $(".question:visible");
-                        if (q.find("h2").length == 0) {
-                            q.prepend('<h2>' + grp.name + '</h2>');
-                        }
-                    }
-                }
-            });
-        }).fail(handleError);
+                });
+            }
+        }
+        ).catch(handleError);
     }
 
-})(jQuery, window, document);
+})(window.core, window, document);
