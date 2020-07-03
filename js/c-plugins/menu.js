@@ -60,7 +60,6 @@ class Menu {
 
   toggle (){
     var c = this.toggler.prop("checked");
-    
     this.toggler.prop("checked", !c);
   }
 }

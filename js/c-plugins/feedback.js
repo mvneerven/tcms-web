@@ -1,6 +1,6 @@
 class Feedback{
     constructor(C, elm){
-
+        return;
 
         const tpl = `<div class="feedback-container c-unselectable">
         <div class="feedback-panel">
