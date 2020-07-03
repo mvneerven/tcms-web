@@ -1,9 +1,6 @@
 class Menu {
   constructor(C, elm) {
 
-    return;
-    
-    
     this.elm = elm;
     this.C=C;
 
