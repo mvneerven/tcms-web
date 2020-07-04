@@ -232,7 +232,10 @@
 
             trigger: function (type, x) {
                 return this._do((el) => {
-                    let ev = new CustomEvent(type, { detail: x });
+                    // let ev = new CustomEvent(type, { detail: x });
+                    // el.dispatchEvent(ev);
+                    let ev = new Event(type);
+                    ev.detail = x;
                     el.dispatchEvent(ev);
                 })
             },

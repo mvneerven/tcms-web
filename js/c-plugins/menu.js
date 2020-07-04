@@ -1,15 +1,17 @@
 class Menu {
   constructor(C, elm) {
-
     this.elm = elm;
-    this.C=C;
+    elm.tooltip("Go to ISV Canvas homepage").on("click", (e) => {
+      if (C(e.target).is("nav")) {
+        window.location.href = "/";
+      }
+    });
 
-    const tpl = `
-    <div class="container">
-      <a class="navbar-brand" href="/"></a>
-      <div class="menu-wrap">
-        <input type="checkbox" class="toggler">
-        <div class="hamburger"><div></div></div>
+    this.C = C;
+
+    const tpl = `<div class="menu-wrap">
+        <input type="checkbox" class="toggler" title="Open menu">
+        <div class="hamburger" ><div></div></div>
         <div class="menu">
           <div>
             <div>
@@ -23,34 +25,31 @@ class Menu {
             </div>
           </div>
         </div>
-      </div>
-    </div>`;
+      </div>`;
 
     var self = this;
-    C.require("/js/c-plugins/menu.css", function(){
+    C.require("/js/c-plugins/menu.css", function () {
       self.build(tpl)
     });
-
   }
 
-  build (tpl){
+  build(tpl) {
     var loc = window.location.pathname;
-    
-    this.elm.html(tpl).addClass("navbar navbar-expand-lg navbar-dark bg-dark static-top header").find("a").each((el) => {
+
+    this.elm.html(tpl).addClass("cp-menu").find("a").each((el) => { 
       var path = el.href.replace(window.location.origin, "");
       if (path === loc) {
         this.C(el).up("li").addClass("menu-item-active").find("a").on("click", (e) => {
           this.toggle();
-          e.returnValue=false;
-          e.cancelBubble=true;
+          e.returnValue = false;
+          e.cancelBubble = true;
           return false;
         });
       }
-
     });
 
     this.C(document).on("keydown", (e) => {
-      if (e.keyCode === 27 && this.C(".menu-wrap .toggler").is(":checked")) {
+      if (e.keyCode === 27 && this.elm.find(".menu-wrap .toggler").is(":checked")) {
         this.toggle();
       }
     });
@@ -58,8 +57,7 @@ class Menu {
     this.toggler = this.elm.find(".toggler");
   }
 
-  toggle (){
-    var c = this.toggler.prop("checked");
-    this.toggler.prop("checked", !c);
+  toggle() {
+    this.toggler.get(0).click();
   }
 }

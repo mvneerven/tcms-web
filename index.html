@@ -17,23 +17,24 @@
   <meta property="og:site_name" content="ISVCanvas.com" />
   <meta property="og:description"
     content="ISV Canvas Tech Maturity Survey - an ISV technical assessment - by Neerventure" />
-
-  <!-- Bootstrap core CSS -->
+  
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&display=swap" rel="stylesheet" />
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css" />
   
-  <link href="css/main.css?v=4.0" rel="stylesheet" />
-  <link href="css/survey.css?v=4.0" rel="stylesheet" />
+  <link href="css/main.css?v=4.2" rel="stylesheet" />
+  <link href="css/survey.css?v=4.1" rel="stylesheet" />
   <link rel="shortcut icon" href="img/icon-64.png" />
+
+  <link rel="prefetch" href="survey.html" as="document"  />
+
 </head>
 
 <body data-c-plugin="Feedback">
   <div class="wrapper">
-    <!-- Navigation -->
+    
     <nav data-c-plugin="Menu"></nav>
-
-    <!-- Page Content -->
+    
     <div class="container content">
       <div id="progress"></div>
       <div class="row">
@@ -46,7 +47,7 @@
 
       <div class="row">
         <div class="col-12 mt-3 mb-3 text-center">
-          <a class="btn btn-primary survey-cta" href="survey.html"><span class="ti-arrow-circle-right">&nbsp;</span>
+          <a title="Take the ISV Canvas Tech Maturity Survey" class="btn btn-primary survey-cta" href="survey.html"><span class="ti-arrow-circle-right">&nbsp;</span>
             Take the survey</a>
         </div>
       </div>
@@ -59,11 +60,11 @@
             Quick answer: a perfect product-market fit, intuitive, fluid User Experience Design (UX), and of course, good marketing.
           </p>
 
-          <p>
+          <blockquote>
             The longer answer however includes stuff that lies beneath the surface: solid architectural design, good use of (Cloud) infrastructure for speed and
             scalability, team quality and efficiency, a streamlined development process, and constant attention to security and compliance
             are equally important.
-          </p>
+          </blockquote>
 
           <p>The ISV Canvas Survey presented here assesses this <strong>Tech State</strong> of Startups, Scaleups and
             ISVs and checks for all these aspects that make up mature software development.</p>
@@ -147,7 +148,7 @@
 
       <div class="row">
         <div class="col-12 mt-5 mb-2 text-center">
-          <a class="btn btn-primary survey-cta" href="survey.html"><span class="ti-arrow-circle-right">&nbsp;</span>Take
+          <a title="Take the ISV Canvas Tech Maturity Survey" class="btn btn-primary survey-cta" href="survey.html"><span class="ti-arrow-circle-right">&nbsp;</span>Take
             the survey</a>
         </div>
       </div>
@@ -175,7 +176,8 @@
     </footer>
   </div>
   
-  <script src="js/core.min.js"></script>
+  <script src="js/core.min.js?v=1.1"></script>
+
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-169426273-1"></script>
   <script>
