@@ -9,7 +9,7 @@
   <meta name="description"
     content="ISV Canvas Tech Maturity Survey for Startups, Scaleups and ISVs, by Neerventure.com" />
   <meta name="keywords" content="Startups, Scaleups, ISVs, Technical Assessment, Investors, M&ap;A" />
-    <meta name="author" content="Marc van Neerven" />
+  <meta name="author" content="Marc van Neerven" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://isvcanvas.com" />
   <meta property="og:title" content="ISV Canvas - by Neerventure" />
@@ -17,25 +17,23 @@
   <meta property="og:site_name" content="ISVCanvas.com" />
   <meta property="og:description"
     content="ISV Canvas Tech Maturity Survey - an ISV technical assessment - by Neerventure" />
-  
-  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&display=swap" rel="stylesheet" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&display=optional" rel="stylesheet" />
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css" />
-  
-  <link href="css/main.css?v=4.2" rel="stylesheet" />
-  <link href="css/survey.css?v=4.1" rel="stylesheet" />
+
+  <link href="css/shared.css?v=4.3" rel="stylesheet" />
+  <link href="css/main.css?v=4.3" rel="stylesheet" />
+
   <link rel="shortcut icon" href="img/icon-64.png" />
-
-  <link rel="prefetch" href="survey.html" as="document"  />
-
+  <link rel="prefetch" href="https://survey.isvcanvas.com/" as="document" data-url="Survey" />
 </head>
 
-<body data-c-plugin="Feedback">
+<body>
   <div class="wrapper">
-    
     <nav data-c-plugin="Menu"></nav>
-    
-    <div class="container content">
+
+    <div class="container content" data-c-plugin="Survey">
       <div id="progress"></div>
       <div class="row">
         <div class="col-lg-12">
@@ -47,7 +45,8 @@
 
       <div class="row">
         <div class="col-12 mt-3 mb-3 text-center">
-          <a title="Take the ISV Canvas Tech Maturity Survey" class="btn btn-primary survey-cta" href="survey.html"><span class="ti-arrow-circle-right">&nbsp;</span>
+          <a title="Take the ISV Canvas Tech Maturity Survey" class="btn btn-primary survey-cta" href="#/survey"><span
+              class="ti-arrow-circle-right">&nbsp;</span>
             Take the survey</a>
         </div>
       </div>
@@ -57,12 +56,15 @@
           <h2>Background</h2>
           <p>
             <strong>What makes great software?</strong> <br />
-            Quick answer: a perfect product-market fit, intuitive, fluid User Experience Design (UX), and of course, good marketing.
+            Quick answer: a perfect product-market fit, intuitive, fluid User Experience Design (UX), and of course,
+            good marketing.
           </p>
 
           <blockquote>
-            The longer answer however includes stuff that lies beneath the surface: solid architectural design, good use of (Cloud) infrastructure for speed and
-            scalability, team quality and efficiency, a streamlined development process, and constant attention to security and compliance
+            The longer answer however includes stuff that lies beneath the surface: solid architectural design, good use
+            of (Cloud) infrastructure for speed and
+            scalability, team quality and efficiency, a streamlined development process, and constant attention to
+            security and compliance
             are equally important.
           </blockquote>
 
@@ -148,7 +150,8 @@
 
       <div class="row">
         <div class="col-12 mt-5 mb-2 text-center">
-          <a title="Take the ISV Canvas Tech Maturity Survey" class="btn btn-primary survey-cta" href="survey.html"><span class="ti-arrow-circle-right">&nbsp;</span>Take
+          <a title="Take the ISV Canvas Tech Maturity Survey" class="btn btn-primary survey-cta" href="#/survey"><span
+              class="ti-arrow-circle-right">&nbsp;</span>Take
             the survey</a>
         </div>
       </div>
@@ -164,9 +167,8 @@
       <div class="row" id="contributors">
         <div class="col-12 text-center">
           <a target="_blank" title="Neerventure CTO-as-a-Service" href="https://neerventure.com"><img
-             alt="Neerventure website" src="img/neerventure-logo.png" /></a>
-          <a target="_blank" title="Microsoft" href="https://www.microsoft.com/"> <img src="img/Microsoft-Logo.png"
-            alt="Microsoft website" class="mt-1" /></a>
+              alt="Neerventure website" src="img/neerventure-logo.png" /></a>
+
         </div>
       </div>
     </div>
@@ -175,8 +177,9 @@
         Policy</a> | <a title="Terms &amp; Conditions" href="/terms-and-conditions.html">Terms &amp; Conditions</a>
     </footer>
   </div>
-  
-  <script src="js/core.min.js?v=1.1"></script>
+
+
+  <script src="https://cdn.neerventure.com/corejs/v0.9/core.min.js"></script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-169426273-1"></script>
@@ -186,7 +189,6 @@
     gtag('js', new Date());
     gtag('config', 'UA-169426273-1');
   </script>
-
 </body>
 
 </html>
